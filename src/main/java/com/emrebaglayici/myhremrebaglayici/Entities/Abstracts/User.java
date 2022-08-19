@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "User",schema = "public")
+@Table(name = "user",schema = "public")
 @AllArgsConstructor
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -19,7 +19,4 @@ public abstract class User {
     @Column(name = "id")
     private int id;
 
-    @NotNull
-    @Column(name = "name")
-    private String name;
 }

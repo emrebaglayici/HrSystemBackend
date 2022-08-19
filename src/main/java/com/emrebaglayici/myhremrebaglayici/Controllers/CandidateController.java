@@ -1,13 +1,14 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.CandidatesService;
+import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
+import com.emrebaglayici.myhremrebaglayici.Core.Result;
 import com.emrebaglayici.myhremrebaglayici.Entities.Concretes.Candidates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/candidate")
@@ -24,5 +25,20 @@ public class CandidateController {
     @PostMapping("/add")
     public ResponseEntity<?> add(@RequestBody Candidates candidate){
         return ResponseEntity.ok(this.candidatesService.add(candidate));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Integer id){
+        return ResponseEntity.ok(this.candidatesService.deleteById(id));
+    }
+
+    @GetMapping("/getAll")
+    public DataResult<List<Candidates>> getAll(){
+        return this.candidatesService.getAll();
+    }
+
+    @PutMapping("/updateCandidatesName")
+    public Result setName(@RequestParam Integer id,@RequestParam String name){
+        return this.candidatesService.setName(id,name);
     }
 }

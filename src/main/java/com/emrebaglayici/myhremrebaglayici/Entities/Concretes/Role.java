@@ -1,14 +1,18 @@
 package com.emrebaglayici.myhremrebaglayici.Entities.Concretes;
 
+
+import com.sun.istack.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "Role")
-@AllArgsConstructor
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
+@Table(name = "role",schema = "public")
 public class Role {
 
     @Id
@@ -16,7 +20,7 @@ public class Role {
     @Column(name = "id")
     private int id;
 
-
-    @Column(name = "name")
-    private String name;
+    @NotNull
+    @Column(name = "role_name")
+    private String roleName;
 }
