@@ -23,7 +23,7 @@ başvuru hakkı verilecektir.
 
 ### İlan yönetimi
 
-- İK çalışanları için ilan yayınlama, girdiği ilanları görüntüleme, girdiği ilanlar için başvuru görüntüleme ve 
+- İK çalışanları için ilan yayınlama, girdiği ilanları görüntüleme, girdiği ilanlar için başvuru görüntüleme ve
 - güncelleme/silme yetkisi verilecek.
 - Adaylar için ilan görüntüleme ve başvuru hakkı verilecektir. Ayrıca adayların başvurdukları ilanları sonradan ilan
   silinse bile görüntülemesine izin verilecektir.
@@ -31,7 +31,7 @@ başvuru hakkı verilecektir.
 ### Mülakat yönetimi
 
 İK çalışanları yayınladıkları her bir ilan için mülakat süreçlerini tanımlayabilecek ve ilanlar üzerinden diledikleri
-aday için mülakat süreci başlatabilecek. Her bir mülakat adımı için gerekli olan notlar ve dökümanlar sisteme API 
+aday için mülakat süreci başlatabilecek. Her bir mülakat adımı için gerekli olan notlar ve dökümanlar sisteme API
 aracılığı ile yüklenebilecek.
 
 ## Teknik beklentiler
