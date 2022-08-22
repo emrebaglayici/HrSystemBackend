@@ -3,7 +3,6 @@ package com.emrebaglayici.myhremrebaglayici.Controllers;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserDto;
-import com.emrebaglayici.myhremrebaglayici.Core.Converters.StringToEnumConverter;
 import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
 import com.emrebaglayici.myhremrebaglayici.Entities.Abstracts.User;
 import com.emrebaglayici.myhremrebaglayici.Entities.Concretes.Role;
@@ -18,12 +17,10 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private  StringToEnumConverter stringToEnumConverter;
 
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
-        this.stringToEnumConverter=new StringToEnumConverter();
     }
 
 //    @PostMapping(value = "/add")
@@ -38,7 +35,7 @@ public class UserController {
         return UserDto.builder()
                 .id(user.getId())
                 .name(user.getName())
-                .role(user.getRole())
+                .role(user.getRole().substring(0,1).toUpperCase()+user.getRole().substring(1))
                 .build();
     }
 

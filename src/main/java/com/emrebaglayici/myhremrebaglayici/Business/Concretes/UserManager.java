@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class UserManager implements UserService {
 
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public UserManager(UserRepository userRepository) {
@@ -21,11 +21,17 @@ public class UserManager implements UserService {
 
     @Override
     public User saveUser(User user) {
-        if (!this.userRepository.existsUserById(user.getId())){
+        if (!this.userRepository.existsUserByName(user.getName())){
             this.userRepository.save(user);
+        }else {
+
         }
+//        if (!this.userRepository.existsUserById(user.getId())){
+//            this.userRepository.save(user);
+//        }
        return user;
     }
+
 
 //    @Override
 //    public Result add(User user) {

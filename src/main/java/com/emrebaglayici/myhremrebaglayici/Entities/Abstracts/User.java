@@ -26,6 +26,6 @@ public class User {
 
     private String name;
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
+//    @Enumerated(EnumType.STRING)
+    private String role;
 }

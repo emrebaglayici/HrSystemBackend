@@ -1,6 +1,13 @@
 package com.emrebaglayici.myhremrebaglayici.Entities.Concretes;
 
 public enum Role {
-    HR,
-    CANDIDATES
+    HR("Hr"),
+    CANDIDATES("Candidates");
+    private final String name;
+    Role(String name) {
+        this.name = name;
+    }
+    public String getName() {
+        return name;
+    }
 }
