@@ -2,12 +2,12 @@ package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Core.*;
+import com.emrebaglayici.myhremrebaglayici.Entities.Concretes.Role;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
 import com.emrebaglayici.myhremrebaglayici.Entities.Abstracts.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 public class UserManager implements UserService {
@@ -20,17 +20,16 @@ public class UserManager implements UserService {
     }
 
     @Override
-    public User saveUser(User user) {
-        if (!this.userRepository.existsUserByName(user.getName())){
+    public DataResult saveUser(User user) {
+        if (!this.userRepository.existsUserByName(user.getName())) {
             this.userRepository.save(user);
-        }else {
-
+            return new SuccessDataResult<>(user, "User added successfully");
+        } else {
+            return new ErrorDataResult<>(user, "User already registered");
         }
-//        if (!this.userRepository.existsUserById(user.getId())){
-//            this.userRepository.save(user);
-//        }
-       return user;
+
     }
+
 
 
 //    @Override
@@ -41,7 +40,6 @@ public class UserManager implements UserService {
 //        }else
 //            return new ErrorResult("The user already registered.");
 //    }
-
 
 
 //    @Override

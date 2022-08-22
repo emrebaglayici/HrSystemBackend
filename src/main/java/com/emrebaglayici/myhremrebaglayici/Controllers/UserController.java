@@ -3,7 +3,7 @@ package com.emrebaglayici.myhremrebaglayici.Controllers;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserDto;
-import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
+import com.emrebaglayici.myhremrebaglayici.Core.*;
 import com.emrebaglayici.myhremrebaglayici.Entities.Abstracts.User;
 import com.emrebaglayici.myhremrebaglayici.Entities.Concretes.Role;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +29,34 @@ public class UserController {
 //    }
 
     @PostMapping("addUser")
-    public UserDto create(@RequestBody UserCreateDto dto){
-        User user=this.userService.saveUser(dto.toUser());
+    public Result create(@RequestBody UserCreateDto dto) {
+        DataResult<User> user = this.userService.saveUser(dto.toUser());
+        if (user.getData() != null) {
+            if (!user.getData().getName().equals("") || !user.getData().getRole().equals("")) {
+                if (user.getData().getRole().equals("Candidates") || user.getData().getRole().equals("Hr")) {
+                    System.out.println(user.getData());
+                    return new SuccessDataResult<>(
+                            UserDto.builder()
+                                    .id(user.getData().getId())
+                                    .name(user.getData().getName())
+                                    .role(user.getData().getRole().substring(0, 1).toUpperCase() + user.getData().getRole().substring(1))
+                                    .build()
+                            , "Success");
+                } else {
+                    return new ErrorDataResult("Wrong role name!");
+                }
 
-        return UserDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .role(user.getRole().substring(0,1).toUpperCase()+user.getRole().substring(1))
-                .build();
+            } else {
+                return new ErrorDataResult("Fields are empty");
+            }
+
+
+        } else {
+
+            return new ErrorResult("Error! Please check fields.");
+        }
+
     }
-
 
 
 //    @GetMapping("userWithRoles")

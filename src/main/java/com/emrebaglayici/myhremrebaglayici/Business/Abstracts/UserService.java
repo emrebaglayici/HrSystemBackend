@@ -17,5 +17,5 @@ public interface UserService {
 //    DataResult<List<User>> getAllUsers();
 
     /*Result add(User user);*/
-    User saveUser(User user);
+    DataResult saveUser(User user);
 }
