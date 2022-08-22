@@ -15,16 +15,17 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Inheritance(strategy = InheritanceType.JOINED)
+@Builder
 @Table(name = "users",schema = "public")
-public abstract class User {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "role_id")
+    private String name;
+
+    @Enumerated(EnumType.STRING)
     private Role role;
 }

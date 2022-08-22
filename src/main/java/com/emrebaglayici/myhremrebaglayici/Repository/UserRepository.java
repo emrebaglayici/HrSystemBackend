@@ -8,10 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface UserRepository extends JpaRepository<User,Long> {
-    @Query("FROM User u JOIN Role r ON u.role.id=r.id")
-    List<User> getAllUserByRoles();
+//    @Query("FROM User u JOIN Role r ON u.role.id=r.id")
+//    List<User> getAllUserByRoles();
+//
+//
+//    @Query("FROM User ")
+//    List<User> getAllUsers();
 
-
-    @Query("FROM User ")
-    List<User> getAllUsers();
+    List<User> getUsersById(Long user_id);
+    boolean existsUserById(Long user_id);
 }

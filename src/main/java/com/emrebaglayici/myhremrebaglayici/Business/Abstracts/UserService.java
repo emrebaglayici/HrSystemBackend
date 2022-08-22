@@ -12,9 +12,10 @@ import java.util.List;
 public interface UserService {
 //    Result add(User user);
 
-    DataResult<List<User>> getAllUserByRoles();
+//    DataResult<List<User>> getAllUserByRoles();
+//
+//    DataResult<List<User>> getAllUsers();
 
-    DataResult<List<User>> getAllUsers();
-
-
+    /*Result add(User user);*/
+    User saveUser(User user);
 }
