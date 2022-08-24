@@ -9,10 +9,7 @@ import com.emrebaglayici.myhremrebaglayici.Core.Result;
 import com.emrebaglayici.myhremrebaglayici.Core.SuccessDataResult;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/jobAds")
@@ -25,13 +22,13 @@ public class JobAdvertisementController {
     }
 
     @PostMapping("addJobAds")
-    public Result create(@RequestBody Long id,@RequestBody JobAdvertisementCreateDto dto){
-        DataResult<JobAdvertisement> jobAds=this.jobAdvertisementService.addJobAds(id,dto.toJobAds());
+    public Result create(@RequestBody JobAdvertisementCreateDto dto){
+        DataResult<JobAdvertisement> jobAds=this.jobAdvertisementService.addJobAds(dto.toJobAds());
         if (jobAds.getData()!=null){
             return new SuccessDataResult<>(
                     JobAdvertisementDto.builder()
                             .id(jobAds.getData().getId())
-                            .user(jobAds.getData().getUser())
+                            .userId(jobAds.getData().getUserId())
                             .type(jobAds.getData().getType())
                             .description(jobAds.getData().getDescription())
                             .salary(jobAds.getData().getSalary())
@@ -42,5 +39,6 @@ public class JobAdvertisementController {
             return new ErrorResult("Data cannot be null");
         }
     }
+    //Todo learn how to check errors and check create api
 
 }

@@ -25,8 +25,8 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     }
 
     @Override
-    public DataResult addJobAds(Long id, JobAdvertisement jobAds) {
-        if (this.userCheckService.checkHr(id)){
+    public DataResult addJobAds(JobAdvertisement jobAds) {
+        if (this.userCheckService.checkHr(jobAds.getUserId())){
             this.jobAdvertisementRepository.save(jobAds);
             return new SuccessDataResult(jobAds,"Job Advertisement added successfully");
         }else

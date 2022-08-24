@@ -12,15 +12,16 @@ import java.util.List;
 @NoArgsConstructor
 @Data
 @Builder
+
 @Table(name = "users",schema = "public")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "id")
     private Long id;
     private String name;
     private String role;
 
-    @OneToMany(mappedBy = "user")
-    private List<JobAdvertisement> jobAdvertisements;
+//    @OneToMany(mappedBy = "user")
+//    @OneToMany(mappedBy = "userId")
+//    private List<JobAdvertisement> jobAdvertisements;
 }
