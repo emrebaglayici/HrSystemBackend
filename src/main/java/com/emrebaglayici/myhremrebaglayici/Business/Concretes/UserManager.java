@@ -1,13 +1,12 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
-
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Core.*;
-import com.emrebaglayici.myhremrebaglayici.Entities.Concretes.Role;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
-import com.emrebaglayici.myhremrebaglayici.Entities.Abstracts.User;
+import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class UserManager implements UserService {
@@ -30,40 +29,33 @@ public class UserManager implements UserService {
 
     }
 
+    @Override
+    public Result deleteById(Long id) {
+        if (userRepository.existsUserById(id)){
+            this.userRepository.deleteById(id);
+            return new SuccessDataResult<>("User deleted");
+        }else
+            return new ErrorDataResult<>("User not found");
+
+    }
+
+    @Override
+    public Result updateNameById(Long id, String name) {
+        User user;
+        if (userRepository.existsUserById(id)){
+            user= this.userRepository.findById(id).get();
+            user.setName(name);
+            this.userRepository.save(user);
+            return new SuccessResult("User's name changed");
+        }else{
+            return new ErrorResult("User not found");
+        }
+    }
 
 
-//    @Override
-//    public Result add(User user) {
-//        if (!this.userRepository.existsUserById(user.getId())){
-//            this.userRepository.save(user);
-//            return new SuccessDataResult<>(user,"User added");
-//        }else
-//            return new ErrorResult("The user already registered.");
-//    }
+    public Page<User> listUsers(Pageable page){
+            return userRepository.findAll(page);
+    }
 
-
-//    @Override
-//    public Result add(User user) {
-//        this.userRepository.save(user);
-//        return new SuccessDataResult<>("User Added");
-//    }
-
-//    @Override
-//    public DataResult<List<User>> getAllUserByRoles() {
-//        this.userRepository.getAllUserByRoles();
-//        return new SuccessDataResult<>("Users and role are listed");
-//    }
-//
-//    @Override
-//    public DataResult<List<User>> getAllUsers() {
-//
-//        this.userRepository.getAllUsers();
-//        return new SuccessDataResult<>("Users are listed.");
-//    }
-
-//    @Override
-//    public Result add(User user) {
-//        userRepository.save(user);
-//        return new SuccessResult("User added");
-//    }
+    //TODO ask how to check pageable sort parameter check if not "string"
 }

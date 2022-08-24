@@ -1,21 +1,20 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Abstracts;
-
 import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
 import com.emrebaglayici.myhremrebaglayici.Core.Result;
-import com.emrebaglayici.myhremrebaglayici.Entities.Abstracts.User;
+import com.emrebaglayici.myhremrebaglayici.Entities.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
-
-import javax.xml.crypto.Data;
-import java.util.List;
+import org.springframework.data.repository.query.Param;
 
 
 public interface UserService {
-//    Result add(User user);
-
-//    DataResult<List<User>> getAllUserByRoles();
-//
-//    DataResult<List<User>> getAllUsers();
-
-    /*Result add(User user);*/
     DataResult saveUser(User user);
+    @Query("DELETE FROM User WHERE id = :id")
+    Result deleteById(@Param("id") Long id);
+
+    @Query("UPDATE User SET name = :name WHERE id = :id")
+    Result updateNameById(@Param("id") Long id,@Param("name") String name);
+
+    Page<User> listUsers(Pageable pageable);
 }

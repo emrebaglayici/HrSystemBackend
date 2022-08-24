@@ -1,8 +1,4 @@
-package com.emrebaglayici.myhremrebaglayici.Entities.Abstracts;
-
-
-import com.emrebaglayici.myhremrebaglayici.Entities.Concretes.Role;
-import com.sun.istack.NotNull;
+package com.emrebaglayici.myhremrebaglayici.Entities;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,14 +14,13 @@ import java.util.List;
 @Builder
 @Table(name = "users",schema = "public")
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
     private Long id;
-
     private String name;
-
-//    @Enumerated(EnumType.STRING)
     private String role;
+
+    @OneToMany(mappedBy = "user")
+    private List<JobAdvertisement> jobAdvertisements;
 }

@@ -1,4 +1,4 @@
-package com.emrebaglayici.myhremrebaglayici.Entities.Concretes;
+package com.emrebaglayici.myhremrebaglayici.Entities;
 
 public enum Role {
     HR("Hr"),

@@ -1,7 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
 
-import com.emrebaglayici.myhremrebaglayici.Entities.Abstracts.User;
-import com.emrebaglayici.myhremrebaglayici.Entities.Concretes.Role;
+import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import lombok.Setter;
 
 @Setter

@@ -1,6 +1,5 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
 
-import com.emrebaglayici.myhremrebaglayici.Entities.Concretes.Role;
 import lombok.Builder;
 import lombok.Data;
 
