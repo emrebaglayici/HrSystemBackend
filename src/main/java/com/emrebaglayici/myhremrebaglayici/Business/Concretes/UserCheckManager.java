@@ -21,4 +21,15 @@ public class UserCheckManager implements UserCheckService {
         User user=this.userRepository.getUsersById(id);
         return user.getRole().equals("Hr");
     }
+
+    @Override
+    public boolean checkCandidates(Long id) {
+        User user=this.userRepository.getUsersById(id);
+        return user.getRole().equals("Candidate");
+    }
+
+    @Override
+    public boolean existsUser(Long id) {
+        return this.userRepository.existsUserById(id);
+    }
 }
