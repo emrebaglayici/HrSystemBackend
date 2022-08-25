@@ -4,10 +4,7 @@ import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.ApplyService;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementCheckService;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserCheckService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplyCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
-import com.emrebaglayici.myhremrebaglayici.Core.ErrorDataResult;
-import com.emrebaglayici.myhremrebaglayici.Core.Result;
-import com.emrebaglayici.myhremrebaglayici.Core.SuccessDataResult;
+import com.emrebaglayici.myhremrebaglayici.Core.*;
 import com.emrebaglayici.myhremrebaglayici.Entities.Apply;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.NotFountException;
@@ -17,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -58,6 +56,40 @@ public class ApplyManager implements ApplyService {
     @Override
     public Page<Apply> listApply(Pageable pageable) {
         return this.applyRepository.findAll(pageable);
+    }
+
+    @Override
+    public Result updateExperienceYear(Long id, Long userId, int experienceYear) {
+        Apply apply;
+        if (this.applyRepository.existsById(id)){
+            if (!this.userCheckService.checkHr(userId)){
+                if (this.applyRepository.getUserIdById(userId)==userId){
+                    apply=this.applyRepository.findById(id).get();
+                    apply.setExperienceYear(experienceYear);
+                    this.applyRepository.save(apply);
+                    return new SuccessDataResult<>("Experience year updated");
+                }else{
+                    return new ErrorResult("User not found");
+                }
+            }else{
+                return new ErrorResult("Hr cannot edit this part");
+            }
+        }else{
+            return new ErrorResult("Apply not found");
+        }
+
+//        if (!this.applyRepository.existsById(id)){
+//            throw new NotFountException("Apply not found.");
+//        }
+//        Optional<Apply> apply=applyRepository.findById(userId);
+//        if (apply.isPresent()){
+//            if (!Objects.equals(apply.get().getUserId(), userId)){
+//                throw new NotFountException("User is not found.");
+//            }
+//        }
+//        apply.get().setExperienceYear(experienceYear);
+//        this.applyRepository.save(apply.get());
+//        return new SuccessDataResult<>("Apply experience year updated");
     }
 
 

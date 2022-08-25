@@ -7,9 +7,13 @@ import com.emrebaglayici.myhremrebaglayici.Entities.Apply;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface ApplyService {
 
     void applyJob(ApplyCreateDto apply);
     Page<Apply> listApply(Pageable pageable);
+
+    @Query("UPDATE Apply SET experienceYear =:experienceYear WHERE id =:id")
+    Result updateExperienceYear(@Param("id")Long id,@Param("userId")Long userId,@Param("experienceYear")int experienceYear);
 }

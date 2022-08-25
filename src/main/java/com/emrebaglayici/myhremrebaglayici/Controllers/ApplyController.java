@@ -3,6 +3,7 @@ package com.emrebaglayici.myhremrebaglayici.Controllers;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.ApplyService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplyCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplyDto;
+import com.emrebaglayici.myhremrebaglayici.Core.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +36,9 @@ public class ApplyController {
                 .experienceYear(apply.getExperienceYear())
                 .personalInfo(apply.getPersonalInfo())
                 .appliedTime(apply.getAppliedTime()).build());
+    }
+    @PutMapping("/updateExperienceYear")
+    public Result updateApplyExperienceYear(@RequestParam Long id,@RequestParam Long userId,@RequestParam int experienceYear){
+        return this.applyService.updateExperienceYear(id,userId,experienceYear);
     }
 }
