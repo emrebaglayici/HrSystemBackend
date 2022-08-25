@@ -13,7 +13,7 @@ public class JobAdvertisementCreateDto {
     private String type;
     private String description;
     private double salary;
-    private LocalDate creationTime=LocalDate.now();
+    private LocalDateTime creationTime=LocalDateTime.now();
 
     public JobAdvertisement toJobAds(){
         return JobAdvertisement.builder()

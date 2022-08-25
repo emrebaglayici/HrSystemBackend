@@ -2,7 +2,6 @@ package com.emrebaglayici.myhremrebaglayici.Repository;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import java.util.List;
 
 public interface UserRepository extends PagingAndSortingRepository<User,Long> {
     @Query("SELECT role FROM User where id=: user_id")
@@ -11,5 +10,4 @@ public interface UserRepository extends PagingAndSortingRepository<User,Long> {
     boolean existsUserById(Long user_id);
     boolean existsUserByName(String name);
 
-//    User getUsersById(Long userId);
 }

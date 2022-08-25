@@ -28,5 +28,5 @@ public class JobAdvertisement {
     private double salary;
 
 
-    private LocalDate creationTime=LocalDate.now();
+    private LocalDateTime creationTime=LocalDateTime.now();
 }
