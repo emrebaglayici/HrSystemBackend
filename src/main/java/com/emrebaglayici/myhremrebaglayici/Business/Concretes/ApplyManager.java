@@ -13,6 +13,8 @@ import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -52,4 +54,11 @@ public class ApplyManager implements ApplyService {
             throw new NotFountException("This user already applied this ad.");
 
     }
+
+    @Override
+    public Page<Apply> listApply(Pageable pageable) {
+        return this.applyRepository.findAll(pageable);
+    }
+
+
 }
