@@ -17,4 +17,7 @@ public interface UserService {
     Result updateNameById(@Param("id") Long id,@Param("name") String name);
 
     Page<User> listUsers(Pageable pageable);
+
+
+
 }

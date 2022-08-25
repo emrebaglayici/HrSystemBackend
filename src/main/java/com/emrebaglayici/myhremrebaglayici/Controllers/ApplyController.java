@@ -26,18 +26,19 @@ public class ApplyController {
 
     @PostMapping("applyJob")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> create(@RequestBody ApplyCreateDto dto){
-        Apply apply=this.applyService.applyJob(dto.toApply());
-            return ResponseEntity.ok(
-                    ApplyDto.builder()
-                            .id(apply.getId())
-                            .jobId(apply.getJobId())
-                            .userId(apply.getUserId())
-                            .experienceYear(apply.getExperienceYear())
-                            .personalInfo(apply.getPersonalInfo())
-                            .appliedTime(apply.getAppliedTime())
-                            .build()
-            );
+    public void create(@RequestBody ApplyCreateDto dto){
+//        Apply apply=this.applyService.applyJob(dto.toApply());
+//            return ResponseEntity.ok(
+//                    ApplyDto.builder()
+//                            .id(apply.getId())
+//                            .jobId(apply.getJobId())
+//                            .userId(apply.getUserId())
+//                            .experienceYear(apply.getExperienceYear())
+//                            .personalInfo(apply.getPersonalInfo())
+//                            .appliedTime(apply.getAppliedTime())
+//                            .build()
+//            );
+        applyService.applyJob(dto);
 
     }
 }

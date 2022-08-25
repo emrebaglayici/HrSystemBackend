@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class UserCheckManager implements UserCheckService {
     private final UserRepository userRepository;
@@ -32,4 +34,11 @@ public class UserCheckManager implements UserCheckService {
     public boolean existsUser(Long id) {
         return this.userRepository.existsUserById(id);
     }
+
+    @Override
+    public Optional<User> getUserById(Long userId) {
+        return userRepository.findById(userId);
+    }
+
+
 }

@@ -7,5 +7,8 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface ApplyRepository extends PagingAndSortingRepository<Apply,Long> {
 
     @Query("SELECT userId FROM Apply WHERE jobId =:jobId")
-    int getUserIdByJobId(Long jobId);
+    Long getUserIdByJobId(Long jobId);
+
+
+
 }

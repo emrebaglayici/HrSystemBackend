@@ -18,4 +18,9 @@ public class JobAdvertisementCheckManager implements JobAdvertisementCheckServic
     public boolean existsJob(Long id) {
         return this.jobAdvertisementRepository.existsById(id);
     }
+
+    @Override
+    public long count() {
+        return jobAdvertisementRepository.count();
+    }
 }
