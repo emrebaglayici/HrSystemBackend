@@ -2,8 +2,10 @@ package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementService;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserCheckService;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Core.*;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
+import com.emrebaglayici.myhremrebaglayici.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,12 +25,23 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     }
 
     @Override
-    public DataResult addJobAds(JobAdvertisement jobAds) {
-        if (this.userCheckService.checkHr(jobAds.getUserId())) {
-            this.jobAdvertisementRepository.save(jobAds);
-            return new SuccessDataResult(jobAds, "Job Advertisement added successfully");
-        } else
-            return new ErrorDataResult("Candidates cannot add Job Advertisements.");
+    public void addJobAds(JobAdvertisementCreateDto dto) {
+        if (dto.toJobAds().getUserId() != 0 && !dto.toJobAds().getType().equals("string") &&
+                !dto.toJobAds().getDescription().equals("string") && dto.toJobAds().getSalary() != 0 &&
+                !dto.toJobAds().getType().equals("") && !dto.toJobAds().getDescription().equals("")) {
+            if (this.userCheckService.existsUser(dto.toJobAds().getUserId())) {
+                if (this.userCheckService.checkHr(dto.toJobAds().getUserId())) {
+                    this.jobAdvertisementRepository.save(dto.toJobAds());
+                } else {
+                    throw new NotFountException("Candidates cannot add Job Advertisements.");
+                }
+            } else {
+                throw new NotFountException("User not Found");
+            }
+
+        } else {
+            throw new NotFountException("Please fill the blanks");
+        }
     }
 
     @Override

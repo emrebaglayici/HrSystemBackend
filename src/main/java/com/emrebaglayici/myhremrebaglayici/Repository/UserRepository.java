@@ -11,7 +11,4 @@ public interface UserRepository extends PagingAndSortingRepository<User, Long> {
     User getUsersById(Long user_id);
 
     boolean existsUserById(Long user_id);
-
-    boolean existsUserByName(String name);
-
 }

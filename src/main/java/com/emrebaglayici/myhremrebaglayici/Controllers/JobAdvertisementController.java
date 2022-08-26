@@ -3,19 +3,16 @@ package com.emrebaglayici.myhremrebaglayici.Controllers;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementDto;
-import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
-import com.emrebaglayici.myhremrebaglayici.Core.ErrorResult;
 import com.emrebaglayici.myhremrebaglayici.Core.Result;
-import com.emrebaglayici.myhremrebaglayici.Core.SuccessDataResult;
-import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/jobAds")
+@RequestMapping("/api/v1/jobAds")
 public class JobAdvertisementController {
     private final JobAdvertisementService jobAdvertisementService;
 
@@ -24,26 +21,11 @@ public class JobAdvertisementController {
         this.jobAdvertisementService = jobAdvertisementService;
     }
 
-    @PostMapping("addJobAds")
-    public Result create(@RequestBody JobAdvertisementCreateDto dto) {
-        DataResult<JobAdvertisement> jobAds = this.jobAdvertisementService.addJobAds(dto.toJobAds());
-        if (jobAds.getData() != null) {
-            return new SuccessDataResult<>(
-                    JobAdvertisementDto.builder()
-                            .id(jobAds.getData().getId())
-                            .userId(jobAds.getData().getUserId())
-                            .type(jobAds.getData().getType())
-                            .description(jobAds.getData().getDescription())
-                            .salary(jobAds.getData().getSalary())
-                            .creationTime(jobAds.getData().getCreationTime())
-                            .build(), "Success"
-            );
-        } else {
-            return new ErrorResult("Data cannot be null");
-        }
+    @PostMapping("jobAd")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void createJobAd(@RequestBody JobAdvertisementCreateDto dto) {
+        this.jobAdvertisementService.addJobAds(dto);
     }
-    //Todo learn how to check errors and check create api
-
     @GetMapping("jobAds")
     public Page<JobAdvertisementDto> listJobAds(Pageable pageable) {
         return jobAdvertisementService.listJobAds(pageable)
@@ -56,17 +38,17 @@ public class JobAdvertisementController {
                         .creationTime(jobAdvertisement.getCreationTime()).build());
     }
 
-    @PutMapping("/updateJobAdsSalary")
+    @PutMapping("/jobAdsSalary")
     public Result updateJobAdSalary(@RequestParam Long id, @RequestParam Long userId, @RequestParam double salary) {
         return this.jobAdvertisementService.updateSalaryById(id, userId, salary);
     }
 
-    @PutMapping("/updateJobAdsType")
+    @PutMapping("/jobAdsType")
     public Result updateJobAdType(@RequestParam Long id, @RequestParam Long userId, @RequestParam String type) {
         return this.jobAdvertisementService.updateTypeById(id, userId, type);
     }
 
-    @PutMapping("/updateJobAdsDescription")
+    @PutMapping("/jobAdsDescription")
     public Result updateJobAdDescription(@RequestParam Long id, @RequestParam Long userId, @RequestParam String desc) {
         return this.jobAdvertisementService.updateDescriptionById(id, userId, desc);
     }

@@ -1,5 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Abstracts;
 
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
 import com.emrebaglayici.myhremrebaglayici.Core.Result;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
@@ -9,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 public interface JobAdvertisementService {
-    DataResult addJobAds(JobAdvertisement jobAds);
+    void addJobAds(JobAdvertisementCreateDto jobAds);
 
     Page<JobAdvertisement> listJobAds(Pageable pageable);
 

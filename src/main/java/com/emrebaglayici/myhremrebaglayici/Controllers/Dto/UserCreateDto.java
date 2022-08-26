@@ -9,9 +9,11 @@ public class UserCreateDto {
     private String role;
 
     public User toUser() {
+        if (role.length()>0)
+            this.role=role.substring(0, 1).toUpperCase() + this.role.substring(1);
         return User.builder()
                 .name(this.name)
-                .role(this.role.substring(0, 1).toUpperCase() + this.role.substring(1))
+                .role(this.role)
                 .build();
     }
 }

@@ -1,7 +1,10 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Core.*;
+import com.emrebaglayici.myhremrebaglayici.Entities.Role;
+import com.emrebaglayici.myhremrebaglayici.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +23,20 @@ public class UserManager implements UserService {
     }
 
     @Override
-    public DataResult saveUser(User user) {
-        if (!this.userRepository.existsUserByName(user.getName())) {
-            this.userRepository.save(user);
-            return new SuccessDataResult<>(user, "User added successfully");
+    public void saveUser(UserCreateDto dto) {
+        if (!dto.toUser().getName().equals("") &&
+                !dto.toUser().getName().equals("string") &&
+                !dto.toUser().getRole().equals("") &&
+                !dto.toUser().getName().equals("string")) {
+            if (dto.toUser().getRole().equals(Role.CANDIDATES.getName()) ||
+                    dto.toUser().getRole().equals(Role.HR.getName())) {
+                this.userRepository.save(dto.toUser());
+            } else {
+                throw new NotFountException("Role is incorrect");
+            }
         } else {
-            return new ErrorDataResult<>(user, "User already registered");
+            throw new NotFountException("Please fill the gaps.");
         }
-
     }
 
     @Override

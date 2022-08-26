@@ -1,5 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Abstracts;
 
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
 import com.emrebaglayici.myhremrebaglayici.Core.Result;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
@@ -10,7 +11,7 @@ import org.springframework.data.repository.query.Param;
 
 
 public interface UserService {
-    DataResult saveUser(User user);
+    void saveUser(UserCreateDto dto);
 
     @Query("DELETE FROM User WHERE id = :id")
     Result deleteById(@Param("id") Long id);
