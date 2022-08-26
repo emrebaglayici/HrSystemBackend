@@ -7,7 +7,6 @@ import com.emrebaglayici.myhremrebaglayici.Core.*;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,7 +17,6 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final UserCheckService userCheckService;
 
-    @Autowired
     public JobAdvertisementManager(JobAdvertisementRepository jobAdvertisementRepository, UserCheckService userCheckService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.userCheckService = userCheckService;

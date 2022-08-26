@@ -4,7 +4,6 @@ import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.ApplyService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplyCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplyDto;
 import com.emrebaglayici.myhremrebaglayici.Core.Result;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,8 +13,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/apply")
 public class ApplyController {
     private final ApplyService applyService;
-
-    @Autowired
     public ApplyController(ApplyService applyService) {
         this.applyService = applyService;
     }

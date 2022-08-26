@@ -7,7 +7,6 @@ import com.emrebaglayici.myhremrebaglayici.Entities.Role;
 import com.emrebaglayici.myhremrebaglayici.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,8 +15,6 @@ import org.springframework.stereotype.Service;
 public class UserManager implements UserService {
 
     private final UserRepository userRepository;
-
-    @Autowired
     public UserManager(UserRepository userRepository) {
         this.userRepository = userRepository;
     }

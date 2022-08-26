@@ -4,7 +4,6 @@ import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementSe
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementDto;
 import com.emrebaglayici.myhremrebaglayici.Core.Result;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -15,8 +14,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/jobAds")
 public class JobAdvertisementController {
     private final JobAdvertisementService jobAdvertisementService;
-
-    @Autowired
     public JobAdvertisementController(JobAdvertisementService jobAdvertisementService) {
         this.jobAdvertisementService = jobAdvertisementService;
     }

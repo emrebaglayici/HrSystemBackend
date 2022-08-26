@@ -3,7 +3,6 @@ import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserDto;
 import com.emrebaglayici.myhremrebaglayici.Core.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
-
-    @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
     }

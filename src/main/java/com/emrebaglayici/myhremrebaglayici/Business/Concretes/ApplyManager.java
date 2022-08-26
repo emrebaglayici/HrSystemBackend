@@ -9,7 +9,6 @@ import com.emrebaglayici.myhremrebaglayici.Entities.Apply;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplyRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -23,7 +22,6 @@ public class ApplyManager implements ApplyService {
     private final UserCheckService userCheckService;
     private final JobAdvertisementCheckService jobAdvertisementCheckService;
 
-    @Autowired
     public ApplyManager(ApplyRepository applyRepository,
                         UserCheckService userCheckService,
                         JobAdvertisementCheckService jobAdvertisementCheckService) {
