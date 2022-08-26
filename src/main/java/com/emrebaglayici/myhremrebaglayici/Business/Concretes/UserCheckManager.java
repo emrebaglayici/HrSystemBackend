@@ -20,14 +20,14 @@ public class UserCheckManager implements UserCheckService {
 
     @Override
     public boolean checkHr(Long id) {
-        User user=this.userRepository.getUsersById(id);
+        User user = this.userRepository.getUsersById(id);
         return user.getRole().equals("Hr");
     }
 
     @Override
     public boolean checkCandidates(Long id) {
-        User user=this.userRepository.getUsersById(id);
-        return user.getRole().equals("Candidate");
+        User user = this.userRepository.getUsersById(id);
+        return user.getRole().equals("Candidates");
     }
 
     @Override

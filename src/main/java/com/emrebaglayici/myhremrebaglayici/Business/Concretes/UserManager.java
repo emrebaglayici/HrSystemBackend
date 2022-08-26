@@ -1,4 +1,5 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
+
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Core.*;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
@@ -31,10 +32,10 @@ public class UserManager implements UserService {
 
     @Override
     public Result deleteById(Long id) {
-        if (userRepository.existsUserById(id)){
+        if (userRepository.existsUserById(id)) {
             this.userRepository.deleteById(id);
             return new SuccessDataResult<>("User deleted");
-        }else
+        } else
             return new ErrorDataResult<>("User not found");
 
     }
@@ -42,19 +43,19 @@ public class UserManager implements UserService {
     @Override
     public Result updateNameById(Long id, String name) {
         User user;
-        if (userRepository.existsUserById(id)){
-            user= this.userRepository.findById(id).get();
+        if (userRepository.existsUserById(id)) {
+            user = this.userRepository.findById(id).get();
             user.setName(name);
             this.userRepository.save(user);
             return new SuccessResult("User's name changed");
-        }else{
+        } else {
             return new ErrorResult("User not found");
         }
     }
 
 
-    public Page<User> listUsers(Pageable page){
-            return userRepository.findAll(page);
+    public Page<User> listUsers(Pageable page) {
+        return userRepository.findAll(page);
     }
 
     //TODO ask how to check pageable sort parameter check if not "string"

@@ -28,8 +28,8 @@ public class ApplyController {
     }
 
     @GetMapping("applies")
-    public Page<ApplyDto> listApplies(Pageable pageable){
-        return applyService.listApply(pageable).map(apply->ApplyDto.builder()
+    public Page<ApplyDto> listApplies(Pageable pageable) {
+        return applyService.listApply(pageable).map(apply -> ApplyDto.builder()
                 .id(apply.getId())
                 .userId(apply.getUserId())
                 .jobId(apply.getJobId())
@@ -37,8 +37,14 @@ public class ApplyController {
                 .personalInfo(apply.getPersonalInfo())
                 .appliedTime(apply.getAppliedTime()).build());
     }
+
     @PutMapping("/updateExperienceYear")
-    public Result updateApplyExperienceYear(@RequestParam Long id,@RequestParam Long userId,@RequestParam int experienceYear){
-        return this.applyService.updateExperienceYear(id,userId,experienceYear);
+    public Result updateApplyExperienceYear(@RequestParam Long id, @RequestParam Long userId, @RequestParam int experienceYear) {
+        return this.applyService.updateExperienceYear(id, userId, experienceYear);
+    }
+
+    @PutMapping("/updatePersonalInfo")
+    public Result updateApplyPersonalInfo(@RequestParam Long id, @RequestParam Long userId, @RequestParam String personalInfo) {
+        return this.applyService.updatePersonalInfo(id, userId, personalInfo);
     }
 }

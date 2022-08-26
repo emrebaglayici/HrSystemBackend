@@ -16,5 +16,5 @@ public class JobAdvertisementDto {
     private String type;
     private String description;
     private double salary;
-    private LocalDateTime creationTime=LocalDateTime.now();
+    private LocalDateTime creationTime = LocalDateTime.now();
 }

@@ -11,9 +11,9 @@ public class ApplyCreateDto {
     private Long userId;
     private int experienceYear;
     private String personalInfo;
-    private LocalDateTime appliedTime=LocalDateTime.now();
+    private LocalDateTime appliedTime = LocalDateTime.now();
 
-    public Apply toApply(){
+    public Apply toApply() {
         return Apply.builder()
                 .jobId(this.jobId)
                 .userId(this.userId)

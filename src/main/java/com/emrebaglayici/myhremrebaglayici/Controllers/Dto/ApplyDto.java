@@ -13,5 +13,5 @@ public class ApplyDto {
     private Long userId;
     private int experienceYear;
     private String personalInfo;
-    private LocalDateTime appliedTime=LocalDateTime.now();
+    private LocalDateTime appliedTime = LocalDateTime.now();
 }

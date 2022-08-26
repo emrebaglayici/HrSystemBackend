@@ -1,4 +1,5 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
+
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserDto;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/users")
 public class UserController {
     private final UserService userService;
+
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
@@ -54,7 +56,7 @@ public class UserController {
     }
 
     @GetMapping("users")
-    public Page<UserDto> listUsers(@PageableDefault(page = 0,size = 30)@SortDefault.SortDefaults({@SortDefault(sort = "id",direction = Sort.Direction.ASC)}) Pageable pageable) {
+    public Page<UserDto> listUsers(@PageableDefault(page = 0, size = 30) @SortDefault.SortDefaults({@SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable) {
 
         return userService.listUsers(pageable)
                 .map(user -> UserDto.builder()
@@ -66,12 +68,12 @@ public class UserController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
+    public ResponseEntity<?> delete(@PathVariable Long id) {
         return ResponseEntity.ok(this.userService.deleteById(id));
     }
 
     @PutMapping("/updateUsersName")
-    public Result updateUserName(@RequestParam Long id,@RequestParam String name){
-        return this.userService.updateNameById(id,name);
+    public Result updateUserName(@RequestParam Long id, @RequestParam String name) {
+        return this.userService.updateNameById(id, name);
     }
 }

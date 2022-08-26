@@ -13,9 +13,9 @@ public class JobAdvertisementCreateDto {
     private String type;
     private String description;
     private double salary;
-    private LocalDateTime creationTime=LocalDateTime.now();
+    private LocalDateTime creationTime = LocalDateTime.now();
 
-    public JobAdvertisement toJobAds(){
+    public JobAdvertisement toJobAds() {
         return JobAdvertisement.builder()
                 .userId(this.userId)
                 .type(this.type)

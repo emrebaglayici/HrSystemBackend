@@ -25,9 +25,9 @@ public class JobAdvertisementController {
     }
 
     @PostMapping("addJobAds")
-    public Result create(@RequestBody JobAdvertisementCreateDto dto){
-        DataResult<JobAdvertisement> jobAds=this.jobAdvertisementService.addJobAds(dto.toJobAds());
-        if (jobAds.getData()!=null){
+    public Result create(@RequestBody JobAdvertisementCreateDto dto) {
+        DataResult<JobAdvertisement> jobAds = this.jobAdvertisementService.addJobAds(dto.toJobAds());
+        if (jobAds.getData() != null) {
             return new SuccessDataResult<>(
                     JobAdvertisementDto.builder()
                             .id(jobAds.getData().getId())
@@ -36,16 +36,16 @@ public class JobAdvertisementController {
                             .description(jobAds.getData().getDescription())
                             .salary(jobAds.getData().getSalary())
                             .creationTime(jobAds.getData().getCreationTime())
-                            .build(),"Success"
+                            .build(), "Success"
             );
-        }else{
+        } else {
             return new ErrorResult("Data cannot be null");
         }
     }
     //Todo learn how to check errors and check create api
 
     @GetMapping("jobAds")
-    public Page<JobAdvertisementDto> listJobAds(Pageable pageable){
+    public Page<JobAdvertisementDto> listJobAds(Pageable pageable) {
         return jobAdvertisementService.listJobAds(pageable)
                 .map(jobAdvertisement -> JobAdvertisementDto.builder()
                         .id(jobAdvertisement.getId())
@@ -57,13 +57,24 @@ public class JobAdvertisementController {
     }
 
     @PutMapping("/updateJobAdsSalary")
-    public Result updateJobAdSalary(@RequestParam Long id,@RequestParam Long userId,@RequestParam double salary){
-        return this.jobAdvertisementService.updateSalaryById(id,userId,salary);
+    public Result updateJobAdSalary(@RequestParam Long id, @RequestParam Long userId, @RequestParam double salary) {
+        return this.jobAdvertisementService.updateSalaryById(id, userId, salary);
+    }
+
+    @PutMapping("/updateJobAdsType")
+    public Result updateJobAdType(@RequestParam Long id, @RequestParam Long userId, @RequestParam String type) {
+        return this.jobAdvertisementService.updateTypeById(id, userId, type);
+    }
+
+    @PutMapping("/updateJobAdsDescription")
+    public Result updateJobAdDescription(@RequestParam Long id, @RequestParam Long userId, @RequestParam String desc) {
+        return this.jobAdvertisementService.updateDescriptionById(id, userId, desc);
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id,@RequestParam Long userId){
-        return ResponseEntity.ok(this.jobAdvertisementService.deleteById(id,userId));
+    public ResponseEntity<?> delete(@PathVariable Long id, @RequestParam Long userId) {
+        return ResponseEntity.ok(this.jobAdvertisementService.deleteById(id, userId));
     }
+
 
 }
