@@ -1,7 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Abstracts;
 
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Core.DataResult;
 import com.emrebaglayici.myhremrebaglayici.Core.Result;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import org.springframework.data.domain.Page;
@@ -14,15 +13,16 @@ public interface JobAdvertisementService {
 
     Page<JobAdvertisement> listJobAds(Pageable pageable);
 
-    @Query("UPDATE JobAdvertisement SET salary = : salary WHERE id = :id")
-    Result updateSalaryById(@Param("id") Long id, @Param("userId") Long userId, @Param("salary") double salary);
-
     @Query("DELETE FROM JobAdvertisement WHERE id =:id")
-    Result deleteById(@Param("id") Long id, @Param("userId") Long userId);
+    JobAdvertisement deleteById(@Param("id") Long id, @Param("userId") Long userId);
 
-    @Query("UPDATE JobAdvertisement SET type = : salary WHERE id = :id")
-    Result updateTypeById(@Param("id") Long id, @Param("userId") Long userId, @Param("salary") String type);
+    @Query("UPDATE JobAdvertisement SET type = :type WHERE id = :id")
+    JobAdvertisement updateTypeById(@Param("id") Long id, @Param("userId") Long userId, @Param("type") String type);
 
-    @Query("UPDATE JobAdvertisement SET description = : description WHERE id = :id")
-    Result updateDescriptionById(@Param("id") Long id, @Param("userId") Long userId, @Param("salary") String description);
+    @Query("UPDATE JobAdvertisement SET description = :description WHERE id = :id")
+    JobAdvertisement updateDescriptionById(@Param("id") Long id, @Param("userId") Long userId, @Param("description") String description);
+
+    @Query("UPDATE JobAdvertisement SET salary = :salary WHERE id = :id")
+    JobAdvertisement updateSalaryById(@Param("id") Long id, @Param("userId") Long userId, @Param("salary") double salary);
+
 }

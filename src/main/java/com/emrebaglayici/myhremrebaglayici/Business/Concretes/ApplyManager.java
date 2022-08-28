@@ -7,7 +7,7 @@ import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplyCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Core.*;
 import com.emrebaglayici.myhremrebaglayici.Entities.Apply;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
-import com.emrebaglayici.myhremrebaglayici.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplyRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

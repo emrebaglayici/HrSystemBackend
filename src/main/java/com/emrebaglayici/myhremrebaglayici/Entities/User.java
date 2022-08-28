@@ -3,10 +3,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import javax.persistence.*;
-import java.util.List;
-
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,6 +11,7 @@ import java.util.List;
 @Builder
 
 @Table(name = "users",schema = "public")
+
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -21,7 +19,4 @@ public class User {
     private String name;
     private String role;
 
-//    @OneToMany(mappedBy = "user")
-//    @OneToMany(mappedBy = "userId")
-//    private List<JobAdvertisement> jobAdvertisements;
 }

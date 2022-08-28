@@ -3,7 +3,7 @@ package com.emrebaglayici.myhremrebaglayici.Controllers;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementDto;
-import com.emrebaglayici.myhremrebaglayici.Core.Result;
+import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/jobAds")
 public class JobAdvertisementController {
     private final JobAdvertisementService jobAdvertisementService;
+
     public JobAdvertisementController(JobAdvertisementService jobAdvertisementService) {
         this.jobAdvertisementService = jobAdvertisementService;
     }
@@ -23,6 +24,7 @@ public class JobAdvertisementController {
     public void createJobAd(@RequestBody JobAdvertisementCreateDto dto) {
         this.jobAdvertisementService.addJobAds(dto);
     }
+
     @GetMapping("jobAds")
     public Page<JobAdvertisementDto> listJobAds(Pageable pageable) {
         return jobAdvertisementService.listJobAds(pageable)
@@ -35,18 +37,18 @@ public class JobAdvertisementController {
                         .creationTime(jobAdvertisement.getCreationTime()).build());
     }
 
-    @PutMapping("/jobAdsSalary")
-    public Result updateJobAdSalary(@RequestParam Long id, @RequestParam Long userId, @RequestParam double salary) {
+    @PatchMapping("/updateSalary/{id}/{userId}/{salary}")
+    public JobAdvertisement updateJobAdSalary(@PathVariable Long id, @PathVariable Long userId, @PathVariable double salary) {
         return this.jobAdvertisementService.updateSalaryById(id, userId, salary);
     }
 
-    @PutMapping("/jobAdsType")
-    public Result updateJobAdType(@RequestParam Long id, @RequestParam Long userId, @RequestParam String type) {
+    @PatchMapping("/updateType/{id}/{userId}/{type}")
+    public JobAdvertisement updateJobAdType(@PathVariable Long id, @PathVariable Long userId, @PathVariable String type) {
         return this.jobAdvertisementService.updateTypeById(id, userId, type);
     }
 
-    @PutMapping("/jobAdsDescription")
-    public Result updateJobAdDescription(@RequestParam Long id, @RequestParam Long userId, @RequestParam String desc) {
+    @PatchMapping("/updateDesc/{id}/{userId}/{desc}")
+    public JobAdvertisement updateJobAdDescription(@PathVariable Long id, @PathVariable Long userId, @PathVariable String desc) {
         return this.jobAdvertisementService.updateDescriptionById(id, userId, desc);
     }
 

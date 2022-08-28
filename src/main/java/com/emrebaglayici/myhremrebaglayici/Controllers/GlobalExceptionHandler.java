@@ -1,6 +1,7 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
-import com.emrebaglayici.myhremrebaglayici.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanks;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -17,6 +18,17 @@ public class GlobalExceptionHandler {
                 .body(CustomError.builder()
                         .status(HttpStatus.NOT_FOUND.value())
                         .error(HttpStatus.NOT_FOUND.getReasonPhrase())
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+
+    @ExceptionHandler({FillTheBlanks.class})
+    public ResponseEntity<CustomError> handleFillTheBlanksException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_EXTENDED)
+                .body(CustomError.builder()
+                        .status(HttpStatus.NOT_EXTENDED.value())
+                        .error(HttpStatus.NOT_EXTENDED.getReasonPhrase())
                         .message(ex.getMessage())
                         .timestamp(LocalDateTime.now())
                         .build());

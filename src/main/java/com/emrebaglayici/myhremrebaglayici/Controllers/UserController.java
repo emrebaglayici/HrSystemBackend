@@ -2,7 +2,7 @@ package com.emrebaglayici.myhremrebaglayici.Controllers;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserDto;
-import com.emrebaglayici.myhremrebaglayici.Core.*;
+import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -27,7 +27,8 @@ public class UserController {
     }
 
     @GetMapping("users")
-    public Page<UserDto> listUsers(@PageableDefault(page = 0, size = 30) @SortDefault.SortDefaults({@SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable) {
+    public Page<UserDto> listUsers(@PageableDefault(page = 0, size = 30) @SortDefault.SortDefaults
+            ({@SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable) {
         return userService.listUsers(pageable)
                 .map(user -> UserDto.builder()
                         .id(user.getId())
@@ -42,8 +43,8 @@ public class UserController {
         return ResponseEntity.ok(this.userService.deleteById(id));
     }
 
-    @PutMapping("/usersName")
-    public Result updateUserName(@RequestParam Long id, @RequestParam String name) {
+    @PatchMapping("/users/{id}/{name}")
+    public User updateUserName(@PathVariable Long id, @PathVariable String name) {
         return this.userService.updateNameById(id, name);
     }
 }

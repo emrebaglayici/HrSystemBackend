@@ -3,13 +3,14 @@ package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementService;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserCheckService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Core.*;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
-import com.emrebaglayici.myhremrebaglayici.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanks;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import java.util.Optional;
 
 @Service
 public class JobAdvertisementManager implements JobAdvertisementService {
@@ -24,23 +25,16 @@ public class JobAdvertisementManager implements JobAdvertisementService {
 
     @Override
     public void addJobAds(JobAdvertisementCreateDto dto) {
-        if (dto.toJobAds().getUserId() != 0 && !dto.toJobAds().getType().equals("string") &&
-                !dto.toJobAds().getDescription().equals("string") && dto.toJobAds().getSalary() != 0 &&
-                !dto.toJobAds().getType().equals("") && !dto.toJobAds().getDescription().equals("")) {
-            if (this.userCheckService.existsUser(dto.toJobAds().getUserId())) {
-                if (this.userCheckService.checkHr(dto.toJobAds().getUserId())) {
-                    this.jobAdvertisementRepository.save(dto.toJobAds());
-                } else {
-                    throw new NotFountException("Candidates cannot add Job Advertisements.");
-                }
-            } else {
-                throw new NotFountException("User not Found");
-            }
-
-        } else {
-            throw new NotFountException("Please fill the blanks");
-        }
+        if (dto.toJobAds().getUserId() != 0 && !dto.toJobAds().getType().equals("") &&
+                dto.toJobAds().getSalary() != 0 && !dto.toJobAds().getDescription().equals("")) {
+            if (userCheckService.checkHr(dto.toJobAds().getUserId())) {
+                this.jobAdvertisementRepository.save(dto.toJobAds());
+            } else
+                throw new NotFountException("User must be exists and  Hr!");
+        } else
+            throw new FillTheBlanks("Please fill in the blanks.");
     }
+    //TODO: learn how to check nulls.
 
     @Override
     public Page<JobAdvertisement> listJobAds(Pageable pageable) {
@@ -48,79 +42,48 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     }
 
     @Override
-    public Result updateSalaryById(Long id, Long userId, double salary) {
-        JobAdvertisement jobADs;
-        if (this.jobAdvertisementRepository.existsById(id)) {
-            if (this.userCheckService.existsUser(userId)) {
-                if (this.userCheckService.checkHr(userId)) {
-                    jobADs = this.jobAdvertisementRepository.findById(id).get();
-                    jobADs.setSalary(salary);
-                    this.jobAdvertisementRepository.save(jobADs);
-                    return new SuccessDataResult<>("Job Advertisement's salary has changed.");
-                } else {
-                    return new ErrorResult("Candidates cannot edit job ads.");
-                }
-            } else {
-                return new ErrorResult("User not found.");
-            }
-        } else {
-            return new ErrorResult("Job Advertisement not found.");
+    public JobAdvertisement updateSalaryById(Long id, Long userId, double salary) {
+        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
+        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException("Job Advertisement Not Found!"));
+        if (!userCheckService.checkHr(userId)) {
+            throw new NotFountException("User must be exists and Hr!");
         }
+        jobAds.setSalary(salary);
+        this.jobAdvertisementRepository.save(jobAds);
+        return jobAds;
     }
 
     @Override
-    public Result updateTypeById(Long id, Long userId, String type) {
-        JobAdvertisement jobADs;
-        if (this.jobAdvertisementRepository.existsById(id)) {
-            if (this.userCheckService.existsUser(userId)) {
-                if (this.userCheckService.checkHr(userId)) {
-                    jobADs = this.jobAdvertisementRepository.findById(id).get();
-                    jobADs.setType(type);
-                    this.jobAdvertisementRepository.save(jobADs);
-                    return new SuccessDataResult<>("Job Advertisement's type has changed.");
-                } else {
-                    return new ErrorResult("Candidates cannot edit job ads.");
-                }
-            } else {
-                return new ErrorResult("User not found.");
-            }
-        } else {
-            return new ErrorResult("Job Advertisement not found.");
-        }
+    public JobAdvertisement updateTypeById(Long id, Long userId, String type) {
+        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
+        JobAdvertisement jobADs = jobAdsOptional.orElseThrow(() -> new NotFountException("Job Ads Not Found!"));
+        if (!userCheckService.checkHr(userId))
+            throw new NotFountException("User must be exists and Hr!");
+        jobADs.setType(type);
+        this.jobAdvertisementRepository.save(jobADs);
+        return jobADs;
     }
 
     @Override
-    public Result updateDescriptionById(Long id, Long userId, String description) {
-        JobAdvertisement jobADs;
-        if (this.jobAdvertisementRepository.existsById(id)) {
-            if (this.userCheckService.existsUser(userId)) {
-                if (this.userCheckService.checkHr(userId)) {
-                    jobADs = this.jobAdvertisementRepository.findById(id).get();
-                    jobADs.setDescription(description);
-                    this.jobAdvertisementRepository.save(jobADs);
-                    return new SuccessDataResult<>("Job Advertisement's description has changed.");
-                } else {
-                    return new ErrorResult("Candidates cannot edit job ads.");
-                }
-            } else {
-                return new ErrorResult("User not found.");
-            }
-        } else {
-            return new ErrorResult("Job Advertisement not found.");
-        }
+    public JobAdvertisement updateDescriptionById(Long id, Long userId, String description) {
+        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
+        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException("Job Ads Not Found!"));
+        if (!this.userCheckService.checkHr(userId))
+            throw new NotFountException("User must be exists and Hr!");
+        jobAds.setDescription(description);
+        this.jobAdvertisementRepository.save(jobAds);
+        return jobAds;
     }
 
     @Override
-    public Result deleteById(Long id, Long userId) {
-        if (this.userCheckService.checkHr(userId)) {
-            if (this.jobAdvertisementRepository.existsById(id)) {
-                this.jobAdvertisementRepository.deleteById(id);
-                return new SuccessDataResult<>("Job Ads deleted");
-            } else {
-                return new ErrorResult("Job Ad not found");
-            }
-        } else {
-            return new ErrorResult("Candidates cannot delete job ads.");
-        }
+    public JobAdvertisement deleteById(Long id, Long userId) {
+        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
+        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException("Job Ads not Found!"));
+        if (!this.userCheckService.checkHr(userId))
+            throw new NotFountException("User must be exists and Hr!");
+        this.jobAdvertisementRepository.delete(jobAds);
+        return jobAds;
+
     }
+
 }
