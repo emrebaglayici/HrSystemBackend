@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class ApplyDto {
+public class ApplicationDto {
     private Long id;
     private Long jobId;
     private Long userId;

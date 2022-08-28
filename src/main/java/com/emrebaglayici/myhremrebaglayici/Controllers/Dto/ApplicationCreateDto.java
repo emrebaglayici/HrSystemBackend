@@ -6,7 +6,7 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Setter
-public class ApplyCreateDto {
+public class ApplicationCreateDto {
     private Long jobId;
     private Long userId;
     private int experienceYear;
