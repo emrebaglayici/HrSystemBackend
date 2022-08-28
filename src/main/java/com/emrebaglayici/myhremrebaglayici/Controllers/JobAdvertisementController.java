@@ -52,6 +52,11 @@ public class JobAdvertisementController {
         return this.jobAdvertisementService.updateDescriptionById(id, userId, desc);
     }
 
+    @PatchMapping("/updateActive/{id}/{userId}/{active}")
+    public JobAdvertisement updateJobActive(@PathVariable Long id,@PathVariable Long userId,@PathVariable boolean active){
+        return this.jobAdvertisementService.updateActive(id,userId,active);
+    }
+
     @DeleteMapping("{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, @RequestParam Long userId) {
         return ResponseEntity.ok(this.jobAdvertisementService.deleteById(id, userId));

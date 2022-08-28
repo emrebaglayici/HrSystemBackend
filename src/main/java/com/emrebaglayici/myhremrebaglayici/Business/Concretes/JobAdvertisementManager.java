@@ -1,11 +1,13 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.ApplicationCheckService;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementService;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserCheckService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,7 +20,8 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     private final JobAdvertisementRepository jobAdvertisementRepository;
     private final UserCheckService userCheckService;
 
-    public JobAdvertisementManager(JobAdvertisementRepository jobAdvertisementRepository, UserCheckService userCheckService) {
+    public JobAdvertisementManager(JobAdvertisementRepository jobAdvertisementRepository,
+                                   UserCheckService userCheckService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.userCheckService = userCheckService;
     }
@@ -44,7 +47,7 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     @Override
     public JobAdvertisement updateSalaryById(Long id, Long userId, double salary) {
         Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
-        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException("Job Advertisement Not Found!"));
+        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException("Job advertisement not found!"));
         if (!userCheckService.checkHr(userId)) {
             throw new NotFountException("User must be exists and Hr!");
         }
@@ -54,9 +57,20 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     }
 
     @Override
+    public JobAdvertisement updateActive(Long id, Long userId, boolean active) {
+        Optional<JobAdvertisement> jobAdsOptional=this.jobAdvertisementRepository.findById(id);
+        JobAdvertisement jobAds=jobAdsOptional.orElseThrow(()->new NotFountException("Job advertisement not found!"));
+        if (!this.userCheckService.checkHr(userId))
+            throw new NotFountException("User must be exists and Hr!");
+        jobAds.setActive(active);
+        this.jobAdvertisementRepository.save(jobAds);
+        return jobAds;
+    }
+
+    @Override
     public JobAdvertisement updateTypeById(Long id, Long userId, String type) {
         Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
-        JobAdvertisement jobADs = jobAdsOptional.orElseThrow(() -> new NotFountException("Job Ads Not Found!"));
+        JobAdvertisement jobADs = jobAdsOptional.orElseThrow(() -> new NotFountException("Job advertisement not found!"));
         if (!userCheckService.checkHr(userId))
             throw new NotFountException("User must be exists and Hr!");
         jobADs.setType(type);

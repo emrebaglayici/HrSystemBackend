@@ -18,4 +18,10 @@ public class JobAdvertisementCheckManager implements JobAdvertisementCheckServic
         Optional<JobAdvertisement> jobAds=this.jobAdvertisementRepository.findById(id);
         return jobAds.isPresent();
     }
+
+    @Override
+    public boolean isActive(Long id) {
+        Optional<JobAdvertisement> jobAds=this.jobAdvertisementRepository.findById(id);
+        return jobAds.map(JobAdvertisement::isActive).orElse(false);
+    }
 }

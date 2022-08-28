@@ -20,6 +20,7 @@ public class JobAdvertisement {
     private String type;
     private String description;
     private double salary;
+    private boolean active;
     private LocalDateTime creationTime = LocalDateTime.now();
 
 }

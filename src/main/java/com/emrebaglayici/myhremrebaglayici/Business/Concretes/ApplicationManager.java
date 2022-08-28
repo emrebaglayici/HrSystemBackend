@@ -37,6 +37,9 @@ public class ApplicationManager implements ApplicationService {
         if (!jobAdvertisementCheckService.existsJob(dto.toApply().getJobId())) {
             throw new NotFountException("Not found the job ads.");
         }
+        if (!this.jobAdvertisementCheckService.isActive(dto.toApply().getJobId())){
+            throw new NotFountException("Job Advertisement is not active any more");
+        }
         Optional<User> applyUser = userCheckService.getUserById(dto.toApply().getUserId());
         User user = applyUser.orElseThrow(() -> new NotFountException("User with id : " + dto.toApply().getUserId() + " is not found"));
         if (userCheckService.checkHr(dto.toApply().getUserId())) {
