@@ -1,7 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Abstracts;
 
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Core.Result;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

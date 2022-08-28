@@ -9,7 +9,5 @@ public interface UserCheckService {
 
     boolean checkCandidates(Long id);
 
-    boolean existsUser(Long id);
-
     Optional<User> getUserById(Long userId);
 }

@@ -19,18 +19,11 @@ public class UserCheckManager implements UserCheckService {
         Optional<User> user=this.userRepository.findById(id);
         return user.map(value -> value.getRole().equals(Role.HR.getName())).orElse(false);
     }
-
     @Override
     public boolean checkCandidates(Long id) {
         Optional<User> user=this.userRepository.findById(id);
         return user.map(value -> value.getRole().equals(Role.CANDIDATES.getName())).orElse(false);
     }
-
-    @Override
-    public boolean existsUser(Long id) {
-        return this.userRepository.existsUserById(id);
-    }
-
     @Override
     public Optional<User> getUserById(Long userId) {
         return userRepository.findById(userId);

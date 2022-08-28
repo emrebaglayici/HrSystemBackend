@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Apply {
+public class Application {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;

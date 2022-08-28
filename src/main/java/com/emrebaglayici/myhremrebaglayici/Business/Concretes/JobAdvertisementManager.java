@@ -4,7 +4,7 @@ import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementSe
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserCheckService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanks;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import org.springframework.data.domain.Page;
@@ -32,7 +32,7 @@ public class JobAdvertisementManager implements JobAdvertisementService {
             } else
                 throw new NotFountException("User must be exists and  Hr!");
         } else
-            throw new FillTheBlanks("Please fill in the blanks.");
+            throw new FillTheBlanksException("Please fill in the blanks.");
     }
     //TODO: learn how to check nulls.
 

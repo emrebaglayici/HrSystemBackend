@@ -1,10 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
-
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
-import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import lombok.Setter;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Setter

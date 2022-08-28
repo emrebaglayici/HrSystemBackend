@@ -1,10 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
-
-import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data

@@ -1,7 +1,9 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
-import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanks;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.AlreadyCreatedException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,7 +25,7 @@ public class GlobalExceptionHandler {
                         .build());
     }
 
-    @ExceptionHandler({FillTheBlanks.class})
+    @ExceptionHandler({FillTheBlanksException.class})
     public ResponseEntity<CustomError> handleFillTheBlanksException(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_EXTENDED)
                 .body(CustomError.builder()
@@ -33,4 +35,26 @@ public class GlobalExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .build());
     }
+
+    @ExceptionHandler({AlreadyCreatedException.class})
+    public ResponseEntity<CustomError> alreadyCreatedException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(CustomError.builder()
+                        .status(HttpStatus.CONFLICT.value())
+                        .error(HttpStatus.CONFLICT.getReasonPhrase())
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+    @ExceptionHandler({PermissionException.class})
+    public ResponseEntity<CustomError> permissionException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(CustomError.builder()
+                        .status(HttpStatus.FORBIDDEN.value())
+                        .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+
 }

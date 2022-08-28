@@ -2,10 +2,8 @@ package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserDto;
-import com.emrebaglayici.myhremrebaglayici.Core.*;
 import com.emrebaglayici.myhremrebaglayici.Entities.Role;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanks;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
@@ -33,7 +31,7 @@ public class UserManager implements UserService {
                 throw new NotFountException("Role is not found");
             }
         } else {
-            throw new FillTheBlanks("Please fill the gaps.");
+            throw new FillTheBlanksException("Please fill the gaps.");
         }
     }
     //TODO: find a way to check notnull
@@ -58,6 +56,4 @@ public class UserManager implements UserService {
     public Page<User> listUsers(Pageable page) {
         return userRepository.findAll(page);
     }
-
-    //TODO ask how to check pageable sort parameter check if not "string"
 }

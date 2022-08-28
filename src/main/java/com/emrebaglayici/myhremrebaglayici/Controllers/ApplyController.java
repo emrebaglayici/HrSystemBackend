@@ -3,7 +3,7 @@ package com.emrebaglayici.myhremrebaglayici.Controllers;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.ApplyService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplyCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplyDto;
-import com.emrebaglayici.myhremrebaglayici.Core.Result;
+import com.emrebaglayici.myhremrebaglayici.Entities.Application;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -34,13 +34,13 @@ public class ApplyController {
                 .appliedTime(apply.getAppliedTime()).build());
     }
 
-    @PutMapping("/experienceYear")
-    public Result updateApplyExperienceYear(@RequestParam Long id, @RequestParam Long userId, @RequestParam int experienceYear) {
+    @PatchMapping("/experienceYear/{id}/{userId}/{experienceYear}")
+    public Application updateApplyExperienceYear(@PathVariable Long id, @PathVariable Long userId, @PathVariable int experienceYear) {
         return this.applyService.updateExperienceYear(id, userId, experienceYear);
     }
 
-    @PutMapping("/personalInfo")
-    public Result updateApplyPersonalInfo(@RequestParam Long id, @RequestParam Long userId, @RequestParam String personalInfo) {
+    @PatchMapping("/personalInfo/{id}/{userId}/{personalInfo}")
+    public Application updateApplyPersonalInfo(@PathVariable Long id, @PathVariable Long userId, @PathVariable String personalInfo) {
         return this.applyService.updatePersonalInfo(id, userId, personalInfo);
     }
 }

@@ -9,13 +9,11 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserService {
     void saveUser(UserCreateDto dto);
-
     @Query("DELETE FROM User WHERE id = :id")
     User deleteById(@Param("id") Long id);
 
     @Query("UPDATE User SET name = :name WHERE id = :id")
     User updateNameById(@Param("id") Long id, @Param("name") String name);
-
     Page<User> listUsers(Pageable pageable);
 
 
