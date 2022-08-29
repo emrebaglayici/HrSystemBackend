@@ -10,6 +10,7 @@ public class JobAdvertisementCreateDto {
     private String description;
     private double salary;
     private boolean active;
+    private int interviewCount;
     private LocalDateTime creationTime = LocalDateTime.now();
 
     public JobAdvertisement toJobAds() {
@@ -19,6 +20,7 @@ public class JobAdvertisementCreateDto {
                 .description(this.description)
                 .salary(this.salary)
                 .active(this.active)
+                .interviewCount(this.interviewCount)
                 .creationTime(this.creationTime)
                 .build();
     }

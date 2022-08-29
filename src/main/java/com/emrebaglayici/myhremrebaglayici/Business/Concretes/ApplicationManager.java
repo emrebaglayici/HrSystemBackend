@@ -40,13 +40,15 @@ public class ApplicationManager implements ApplicationService {
         if (!this.jobAdvertisementCheckService.isActive(dto.toApply().getJobId())){
             throw new NotFountException("Job Advertisement is not active any more");
         }
+//        dto.toApply().setJobAdsActive(true);
         Optional<User> applyUser = userCheckService.getUserById(dto.toApply().getUserId());
         User user = applyUser.orElseThrow(() -> new NotFountException("User with id : " + dto.toApply().getUserId() + " is not found"));
         if (userCheckService.checkHr(dto.toApply().getUserId())) {
             throw new PermissionException("Hrs cannot apply job ads");
         }
-        if (Objects.equals(this.applicationRepository.getUserIdByJobId(dto.toApply().getJobId()), dto.toApply().getUserId()))
+        if (Objects.equals(this.applicationRepository.getUserIdByJobId(dto.toApply().getJobId()), dto.toApply().getUserId())) {
             throw new AlreadyCreatedException("This user already applied this ad.");
+        }
         this.applicationRepository.save(dto.toApply());
     }
 

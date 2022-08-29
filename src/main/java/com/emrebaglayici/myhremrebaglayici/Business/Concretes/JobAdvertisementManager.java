@@ -7,7 +7,6 @@ import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreat
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,13 +20,16 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     private final UserCheckService userCheckService;
 
     public JobAdvertisementManager(JobAdvertisementRepository jobAdvertisementRepository,
-                                   UserCheckService userCheckService) {
+                                   UserCheckService userCheckService, ApplicationCheckService applicationCheckService) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
         this.userCheckService = userCheckService;
     }
 
     @Override
     public void addJobAds(JobAdvertisementCreateDto dto) {
+        if (dto.toJobAds().getInterviewCount()>5 || dto.toJobAds().getInterviewCount()==0){
+            throw new NotFountException("Interview count must be 1 to 5!");
+        }
         if (dto.toJobAds().getUserId() != 0 && !dto.toJobAds().getType().equals("") &&
                 dto.toJobAds().getSalary() != 0 && !dto.toJobAds().getDescription().equals("")) {
             if (userCheckService.checkHr(dto.toJobAds().getUserId())) {
@@ -63,6 +65,19 @@ public class JobAdvertisementManager implements JobAdvertisementService {
         if (!this.userCheckService.checkHr(userId))
             throw new NotFountException("User must be exists and Hr!");
         jobAds.setActive(active);
+        this.jobAdvertisementRepository.save(jobAds);
+        return jobAds;
+    }
+
+    @Override
+    public JobAdvertisement updateInterviewCount(Long id, Long userId, int interviewCount) {
+        Optional<JobAdvertisement> jobAdsOptional=this.jobAdvertisementRepository.findById(id);
+        JobAdvertisement jobAds=jobAdsOptional.orElseThrow(()->new NotFountException("Job advertisement not found"));
+        if (!this.userCheckService.checkHr(userId))
+            throw new NotFountException("User must be exists and Hr!");
+        if (interviewCount>5 || interviewCount==0)
+            throw new NotFountException("Interview count must be 1 to 5");
+        jobAds.setInterviewCount(interviewCount);
         this.jobAdvertisementRepository.save(jobAds);
         return jobAds;
     }

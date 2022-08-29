@@ -27,4 +27,7 @@ public interface JobAdvertisementService {
     @Query("UPDATE JobAdvertisement SET active= :active WHERE id = :id")
     JobAdvertisement updateActive(@Param("id") Long id,@Param("userId") Long userId,@Param("active") boolean active);
 
+    @Query("UPDATE JobAdvertisement  SET interviewCount= :interviewCount WHERE id= :id")
+    JobAdvertisement updateInterviewCount(@Param("id") Long id,@Param("userId")Long userId,@Param("interviewCount") int interviewCount);
+
 }
