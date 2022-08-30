@@ -54,25 +54,39 @@ public class StepManager implements StepService {
         Optional<JobAdvertisement> jobAdvertisementOptional=this.jobAdvertisementCheckService.getJobById(application.getJobId());
         JobAdvertisement jobAdvertisement=jobAdvertisementOptional.orElseThrow(()->new NotFountException("Job Advertisement not found"));
 
-        if (!steps.isResult()){
-            log.info("Steps are over , result :"+steps.isResult());
-            throw new NotFountException("Interviewer fails");
+        if (!step.isResult())
+            throw new NotFountException("Steps are over because interview fails");
+        if (step.getName().equals(Steps.HR.getName()))
+            throw new NotFountException("Hr can only in first step");
+        if (steps.getOrderCount()>jobAdvertisement.getInterviewCount())
+            throw new NotFountException("Steps count reached, you cannot add any step");
+        if (steps.getOrderCount()<jobAdvertisement.getInterviewCount()){
+            log.info(steps.getOrderCount().toString());
+            if (!step.getName().equals(Steps.OFFER.getName())){
+                steps.setName(step.getName());
+                steps.setResult(step.isResult());
+                steps.setNotes(step.getNotes());
+                steps.setOrderCount(steps.getOrderCount()+1);
+                log.info(steps.getOrderCount().toString());
+                this.stepRepository.save(steps);
+                return steps;
+            }
+            if (step.getName().equals(Steps.OFFER.getName()))
+                throw new NotFountException("Offer must be last step");
         }
-        if (steps.getName().equals(Steps.OFFER.getName()) &&
-                steps.getOrderCount()<jobAdvertisement.getInterviewCount())
-            throw new NotFountException("Interviewer not in last step");
-
-        if (steps.getOrderCount()!=jobAdvertisement.getInterviewCount()){
-            steps.setName(step.getName());
-            steps.setResult(step.isResult());
-            steps.setNotes(steps.getNotes());
-            steps.setOrderCount(steps.getOrderCount()+1);
-        }else{
-
-            steps.setName(Steps.OFFER.getName());
-            throw new NotFountException("Steps are over!");
+        if (steps.getOrderCount()==jobAdvertisement.getInterviewCount()){
+            log.info(steps.getOrderCount().toString());
+            if (step.getName().equals(Steps.OFFER.getName())){
+                steps.setName(step.getName());
+                steps.setResult(step.isResult());
+                steps.setNotes(step.getNotes());
+                steps.setOrderCount(steps.getOrderCount()+1);
+                log.info(steps.getOrderCount().toString());
+                this.stepRepository.save(steps);
+                return steps;
+            }if (!step.getName().equals(Steps.OFFER.getName()))
+                throw new NotFountException("Offer must be last step");
         }
-        this.stepRepository.save(steps);
         return steps;
     }
 }

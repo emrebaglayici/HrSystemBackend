@@ -2,8 +2,6 @@ package com.emrebaglayici.myhremrebaglayici.Business.Abstracts;
 
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Step;
-import org.springframework.data.repository.query.Param;
-import org.springframework.web.bind.annotation.RequestBody;
 
 public interface StepService {
     void createStep(StepCreateDto step);
