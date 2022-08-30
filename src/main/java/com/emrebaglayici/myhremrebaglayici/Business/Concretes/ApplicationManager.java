@@ -9,6 +9,7 @@ import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.AlreadyCreatedException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
+import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplicationRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,19 +36,18 @@ public class ApplicationManager implements ApplicationService {
     @Override
     public void applyJob(ApplicationCreateDto dto) {
         if (!jobAdvertisementCheckService.existsJob(dto.toApply().getJobId())) {
-            throw new NotFountException("Not found the job ads.");
+            throw new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND);
         }
         if (!this.jobAdvertisementCheckService.isActive(dto.toApply().getJobId())){
-            throw new NotFountException("Job Advertisement is not active any more");
+            throw new NotFountException(Helper.JOB_AD_NOT_ACTIVE);
         }
-//        dto.toApply().setJobAdsActive(true);
         Optional<User> applyUser = userCheckService.getUserById(dto.toApply().getUserId());
         User user = applyUser.orElseThrow(() -> new NotFountException("User with id : " + dto.toApply().getUserId() + " is not found"));
         if (userCheckService.checkHr(dto.toApply().getUserId())) {
-            throw new PermissionException("Hrs cannot apply job ads");
+            throw new PermissionException(Helper.HR_CANNOT_APPLY_JOB);
         }
         if (Objects.equals(this.applicationRepository.getUserIdByJobId(dto.toApply().getJobId()), dto.toApply().getUserId())) {
-            throw new AlreadyCreatedException("This user already applied this ad.");
+            throw new AlreadyCreatedException(Helper.USER_ALREADY_APPLIED);
         }
         this.applicationRepository.save(dto.toApply());
     }
@@ -60,13 +60,13 @@ public class ApplicationManager implements ApplicationService {
     @Override
     public Application updateExperienceYear(Long id, Long userId, int experienceYear) {
         Optional<Application> applyOptional = this.applicationRepository.findById(id);
-        Application apply = applyOptional.orElseThrow(() -> new NotFountException("Apply not found!"));
+        Application apply = applyOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
         Optional<User> userOptional = this.userCheckService.getUserById(userId);
-        User user = userOptional.orElseThrow(() -> new NotFountException("User not found!"));
+        User user = userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
         if (!this.userCheckService.checkCandidates(userId))
-            throw new PermissionException("User must be candidate!");
+            throw new PermissionException(Helper.USER_MUST_BE_CANDIDATES);
         if (!Objects.equals(apply.getUserId(), userId)) {
-            throw new NotFountException("User not found!");
+            throw new NotFountException(Helper.USER_NOT_FOUND);
         }
         apply.setExperienceYear(experienceYear);
         this.applicationRepository.save(apply);
@@ -76,13 +76,13 @@ public class ApplicationManager implements ApplicationService {
     @Override
     public Application updatePersonalInfo(Long id, Long userId, String personalInfo) {
         Optional<Application> applyOptional = this.applicationRepository.findById(id);
-        Application apply = applyOptional.orElseThrow(() -> new NotFountException("Apply not found!"));
+        Application apply = applyOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
         Optional<User> userOptional = this.userCheckService.getUserById(userId);
-        User user = userOptional.orElseThrow(() -> new NotFountException("User not found!"));
+        User user = userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
         if (!this.userCheckService.checkCandidates(userId))
-            throw new PermissionException("User must be candidate!");
+            throw new PermissionException(Helper.USER_MUST_BE_CANDIDATES);
         if (!Objects.equals(apply.getUserId(), userId)) {
-            throw new NotFountException("User not found!");
+            throw new NotFountException(Helper.USER_NOT_FOUND);
         }
         apply.setPersonalInfo(personalInfo);
         this.applicationRepository.save(apply);

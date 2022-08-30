@@ -5,6 +5,7 @@ import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Role;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import org.springframework.data.domain.Page;
@@ -28,18 +29,17 @@ public class UserManager implements UserService {
                     dto.toUser().getRole().equals(Role.HR.getName())) {
                 this.userRepository.save(dto.toUser());
             } else {
-                throw new NotFountException("Role is not found");
+                throw new NotFountException(Helper.ROLE_NOT_FOUND);
             }
         } else {
-            throw new FillTheBlanksException("Please fill the gaps.");
+            throw new FillTheBlanksException(Helper.FILL_ALL_BLANKS);
         }
     }
-    //TODO: find a way to check notnull
 
     @Override
     public User deleteById(Long id) {
         Optional<User> userOptional=userRepository.getUsersById(id);
-        User user=userOptional.orElseThrow(()-> new NotFountException("User not found!"));
+        User user=userOptional.orElseThrow(()-> new NotFountException(Helper.USER_NOT_FOUND));
         this.userRepository.delete(user);
         return user;
     }
@@ -47,7 +47,7 @@ public class UserManager implements UserService {
     @Override
     public User updateNameById(Long id, String name) {
         Optional<User> userOptional= userRepository.getUsersById(id);
-        User user=userOptional.orElseThrow(()-> new NotFountException("User not found!"));
+        User user=userOptional.orElseThrow(()-> new NotFountException(Helper.USER_NOT_FOUND));
         user.setName(name);
         return this.userRepository.save(user);
     }

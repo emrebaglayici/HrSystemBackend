@@ -11,6 +11,7 @@ import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.InterviewFailException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
+import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.StepRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -35,13 +36,13 @@ public class StepManager implements StepService {
     @Override
     public void createStep(StepCreateDto step) {
         if (!step.toStep().isResult())
-            throw new NotFountException("Step must be true at first");
+            throw new NotFountException(Helper.STEP_MUST_BE_TRUE_AT_FIRST);
         if (step.toStep().getNotes().isEmpty() || step.toStep().getName().isEmpty())
-            throw new FillTheBlanksException("Please fill all blanks");
+            throw new FillTheBlanksException(Helper.FILL_ALL_BLANKS);
         Optional<Application> applyOptional = this.applicationCheckManager.findById(step.toStep().getApplicationId());
-        Application application = applyOptional.orElseThrow(() -> new NotFountException("Application not found"));
+        Application application = applyOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
         if (!step.toStep().getName().equals(Steps.HR.getName()))
-            throw new NotFountException("Step must begin with HR");
+            throw new NotFountException(Helper.FIRST_STEP_MUST_BE_HR);
         step.toStep().setOrderCount(1);
         this.stepRepository.save(step.toStep());
     }
@@ -49,25 +50,25 @@ public class StepManager implements StepService {
     @Override
     public Step updateStep(Step step) {
         Optional<Step> stepOptional = this.stepRepository.findById(step.getId());
-        Step steps = stepOptional.orElseThrow(() -> new NotFountException("Step not found!"));
+        Step steps = stepOptional.orElseThrow(() -> new NotFountException(Helper.STEP_NOT_FOUND));
 
         Optional<Application> applicationOptional = this.applicationCheckManager.findById(step.getApplicationId());
-        Application application = applicationOptional.orElseThrow(() -> new NotFountException("Application not found"));
+        Application application = applicationOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
 
         Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementCheckService.getJobById(application.getJobId());
-        JobAdvertisement jobAdvertisement = jobAdvertisementOptional.orElseThrow(() -> new NotFountException("Job Advertisement not found"));
+        JobAdvertisement jobAdvertisement = jobAdvertisementOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
 
         if (step.getName().equals(Steps.HR.getName()))
-            throw new PermissionException("Hr can only in first step");
+            throw new PermissionException(Helper.HR_CAN_ONLY_FIRST_STEP);
         if (steps.getOrderCount() >= jobAdvertisement.getInterviewCount())
-            throw new PermissionException("Steps count reached, you cannot add any step");
+            throw new PermissionException(Helper.STEP_COUNT_REACHED);
         if (!steps.isResult()) {
             steps.setName(step.getName());
             steps.setResult(step.isResult());
             steps.setNotes(step.getNotes());
             steps.setOrderCount(jobAdvertisement.getInterviewCount() + 1);
             log.info("Steps are over because interview fails");
-            throw new InterviewFailException("You cannot keep going to step because interview fails.");
+            throw new InterviewFailException(Helper.STEP_COUNT_REACHED);
         }
 
         if (steps.getOrderCount() < jobAdvertisement.getInterviewCount() - 1) {
@@ -100,7 +101,7 @@ public class StepManager implements StepService {
             return steps;
         }
         if (!step.getName().equals(Steps.OFFER.getName()))
-            throw new PermissionException("Offer must be last step");
+            throw new PermissionException(Helper.OFFER_MUST_BE_LAST_STEP);
         return steps;
     }
 

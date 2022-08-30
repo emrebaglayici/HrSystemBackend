@@ -21,7 +21,6 @@ public class Application {
     private Long userId;
     private int experienceYear;
     private String personalInfo;
-//    private boolean jobAdsActive;
     private LocalDateTime appliedTime = LocalDateTime.now();
 
 }
