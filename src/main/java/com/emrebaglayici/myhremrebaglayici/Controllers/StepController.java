@@ -3,9 +3,12 @@ package com.emrebaglayici.myhremrebaglayici.Controllers;
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.StepService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepListDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepUpdateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Step;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 @Slf4j
@@ -24,6 +27,19 @@ public class StepController {
         this.stepService.createStep(dto);
     }
 
+    @GetMapping("steps")
+    public Page<StepListDto> listStep(Pageable pageable){
+        return stepService.listStep(pageable)
+                .map(step-> StepListDto.builder()
+                        .id(step.getId())
+                        .name(step.getName())
+                        .applicationId(step.getApplicationId())
+                        .result(step.isResult())
+                        .notes(step.getNotes())
+                        .build());
+    }
+
+
     @PatchMapping("/updateStep/")
     public StepDto updateStep(@RequestBody StepUpdateDto dto){
         Step step=stepService.updateStep(dto.toStep());
@@ -36,4 +52,6 @@ public class StepController {
                 .notes(step.getNotes())
                 .build();
     }
+
+
 }

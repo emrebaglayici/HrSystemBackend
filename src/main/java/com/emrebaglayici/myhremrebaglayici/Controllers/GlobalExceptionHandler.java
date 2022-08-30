@@ -1,9 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
-import com.emrebaglayici.myhremrebaglayici.Exceptions.AlreadyCreatedException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -52,6 +49,16 @@ public class GlobalExceptionHandler {
                 .body(CustomError.builder()
                         .status(HttpStatus.FORBIDDEN.value())
                         .error(HttpStatus.FORBIDDEN.getReasonPhrase())
+                        .message(ex.getMessage())
+                        .timestamp(LocalDateTime.now())
+                        .build());
+    }
+    @ExceptionHandler({InterviewFailException.class})
+    public ResponseEntity<CustomError> interviewFailException(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                .body(CustomError.builder()
+                        .status(HttpStatus.EXPECTATION_FAILED.value())
+                        .error(HttpStatus.EXPECTATION_FAILED.getReasonPhrase())
                         .message(ex.getMessage())
                         .timestamp(LocalDateTime.now())
                         .build());

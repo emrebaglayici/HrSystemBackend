@@ -8,9 +8,13 @@ import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Entities.Step;
 import com.emrebaglayici.myhremrebaglayici.Entities.Steps;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.InterviewFailException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Repository.StepRepository;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -53,28 +57,25 @@ public class StepManager implements StepService {
         Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementCheckService.getJobById(application.getJobId());
         JobAdvertisement jobAdvertisement = jobAdvertisementOptional.orElseThrow(() -> new NotFountException("Job Advertisement not found"));
 
-
         if (step.getName().equals(Steps.HR.getName()))
-            throw new NotFountException("Hr can only in first step");
+            throw new PermissionException("Hr can only in first step");
         if (steps.getOrderCount() >= jobAdvertisement.getInterviewCount())
-            throw new NotFountException("Steps count reached, you cannot add any step");
+            throw new PermissionException("Steps count reached, you cannot add any step");
         if (!steps.isResult()) {
             steps.setName(step.getName());
             steps.setResult(step.isResult());
             steps.setNotes(step.getNotes());
             steps.setOrderCount(jobAdvertisement.getInterviewCount() + 1);
             log.info("Steps are over because interview fails");
-            return steps;
+            throw new InterviewFailException("You cannot keep going to step because interview fails.");
         }
 
         if (steps.getOrderCount() < jobAdvertisement.getInterviewCount() - 1) {
-            log.info(steps.getOrderCount().toString());
             if (!step.getName().equals(Steps.OFFER.getName())) {
                 steps.setName(step.getName());
                 steps.setResult(step.isResult());
                 steps.setNotes(step.getNotes());
                 steps.setOrderCount(steps.getOrderCount() + 1);
-                log.info(steps.getOrderCount().toString());
                 this.stepRepository.save(steps);
                 return steps;
             }
@@ -89,7 +90,6 @@ public class StepManager implements StepService {
             }
 
         }
-        log.info(steps.getOrderCount().toString());
         if (step.getName().equals(Steps.OFFER.getName())) {
             steps.setName(step.getName());
             steps.setResult(step.isResult());
@@ -100,7 +100,12 @@ public class StepManager implements StepService {
             return steps;
         }
         if (!step.getName().equals(Steps.OFFER.getName()))
-            throw new NotFountException("Offer must be last step");
+            throw new PermissionException("Offer must be last step");
         return steps;
+    }
+
+    @Override
+    public Page<Step> listStep(Pageable pageable) {
+        return this.stepRepository.findAll(pageable);
     }
 }
