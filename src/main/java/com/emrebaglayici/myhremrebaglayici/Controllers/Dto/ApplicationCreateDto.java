@@ -11,7 +11,6 @@ public class ApplicationCreateDto {
     private Long userId;
     private int experienceYear;
     private String personalInfo;
-    private LocalDateTime appliedTime = LocalDateTime.now();
 
     public Application toApply() {
         return Application.builder()
@@ -19,7 +18,7 @@ public class ApplicationCreateDto {
                 .userId(this.userId)
                 .experienceYear(this.experienceYear)
                 .personalInfo(this.personalInfo)
-                .appliedTime(this.appliedTime)
+                .appliedTime(LocalDateTime.now())
                 .build();
     }
 }

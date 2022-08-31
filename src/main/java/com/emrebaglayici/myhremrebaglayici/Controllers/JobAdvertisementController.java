@@ -34,8 +34,10 @@ public class JobAdvertisementController {
                         .type(jobAdvertisement.getType())
                         .description(jobAdvertisement.getDescription())
                         .salary(jobAdvertisement.getSalary())
-                        .creationTime(jobAdvertisement.getCreationTime()).build());
+                        .interviewCount(jobAdvertisement.getInterviewCount())
+                        .build());
     }
+    //be aware of interviewCount sets again
 
     @PatchMapping("/updateSalary/{id}/{userId}/{salary}")
     public JobAdvertisement updateJobAdSalary(@PathVariable Long id, @PathVariable Long userId, @PathVariable double salary) {

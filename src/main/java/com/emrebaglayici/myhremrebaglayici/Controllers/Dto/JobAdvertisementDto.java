@@ -14,5 +14,4 @@ public class JobAdvertisementDto {
     private double salary;
     private double active;
     private int interviewCount;
-    private LocalDateTime creationTime = LocalDateTime.now();
 }

@@ -57,7 +57,7 @@ public class StepManager implements StepService {
 
         Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementCheckService.getJobById(application.getJobId());
         JobAdvertisement jobAdvertisement = jobAdvertisementOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-
+        boolean isNameOffer=step.getName().equals(Steps.OFFER.getName());
         if (step.getName().equals(Steps.HR.getName()))
             throw new PermissionException(Helper.HR_CAN_ONLY_FIRST_STEP);
         if (steps.getOrderCount() >= jobAdvertisement.getInterviewCount())
@@ -72,26 +72,22 @@ public class StepManager implements StepService {
         }
 
         if (steps.getOrderCount() < jobAdvertisement.getInterviewCount() - 1) {
-            if (!step.getName().equals(Steps.OFFER.getName())) {
-                steps.setName(step.getName());
-                steps.setResult(step.isResult());
-                steps.setNotes(step.getNotes());
+            steps.setName(step.getName());
+            steps.setResult(step.isResult());
+            steps.setNotes(step.getNotes());
+            if (!isNameOffer) {
                 steps.setOrderCount(steps.getOrderCount() + 1);
-                this.stepRepository.save(steps);
-                return steps;
             }
-            if (step.getName().equals(Steps.OFFER.getName())) {
-                steps.setName(step.getName());
-                steps.setResult(step.isResult());
-                steps.setNotes(step.getNotes());
+   //         if (step.getName().equals(Steps.OFFER.getName())) {
+            else{
                 steps.setOrderCount(jobAdvertisement.getInterviewCount() + 1);
                 log.info("Offer given to interviewer and steps are done.");
-                this.stepRepository.save(steps);
-                return steps;
             }
+            this.stepRepository.save(steps);
+            return steps;
 
         }
-        if (step.getName().equals(Steps.OFFER.getName())) {
+        if (isNameOffer) {
             steps.setName(step.getName());
             steps.setResult(step.isResult());
             steps.setNotes(step.getNotes());
@@ -100,9 +96,7 @@ public class StepManager implements StepService {
             this.stepRepository.save(steps);
             return steps;
         }
-        if (!step.getName().equals(Steps.OFFER.getName()))
-            throw new PermissionException(Helper.OFFER_MUST_BE_LAST_STEP);
-        return steps;
+        throw new PermissionException(Helper.OFFER_MUST_BE_LAST_STEP);
     }
 
     @Override
