@@ -37,7 +37,6 @@ public class JobAdvertisementController {
                         .interviewCount(jobAdvertisement.getInterviewCount())
                         .build());
     }
-    //be aware of interviewCount sets again
 
     @PatchMapping("/updateSalary/{id}/{userId}/{salary}")
     public JobAdvertisement updateJobAdSalary(@PathVariable Long id, @PathVariable Long userId, @PathVariable double salary) {
@@ -55,13 +54,13 @@ public class JobAdvertisementController {
     }
 
     @PatchMapping("/updateActive/{id}/{userId}/{active}")
-    public JobAdvertisement updateJobActive(@PathVariable Long id,@PathVariable Long userId,@PathVariable boolean active){
-        return this.jobAdvertisementService.updateActive(id,userId,active);
+    public JobAdvertisement updateJobActive(@PathVariable Long id, @PathVariable Long userId, @PathVariable boolean active) {
+        return this.jobAdvertisementService.updateActive(id, userId, active);
     }
 
     @PatchMapping("/updateInterviewCount/{id}/{userId}/{interviewCount}")
-    public JobAdvertisement updateInterviewCount(@PathVariable Long id,@PathVariable Long userId,@PathVariable int interviewCount){
-        return this.jobAdvertisementService.updateInterviewCount(id,userId,interviewCount);
+    public JobAdvertisement updateInterviewCount(@PathVariable Long id, @PathVariable Long userId, @PathVariable int interviewCount) {
+        return this.jobAdvertisementService.updateInterviewCount(id, userId, interviewCount);
     }
 
     @DeleteMapping("{id}")

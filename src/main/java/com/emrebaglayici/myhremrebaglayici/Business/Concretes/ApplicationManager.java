@@ -11,6 +11,7 @@ import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplicationRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 import java.util.Optional;
 
+@Slf4j
 @Service
 public class ApplicationManager implements ApplicationService {
 
@@ -38,7 +40,7 @@ public class ApplicationManager implements ApplicationService {
         if (!jobAdvertisementCheckService.existsJob(dto.toApply().getJobId())) {
             throw new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND);
         }
-        if (!this.jobAdvertisementCheckService.isActive(dto.toApply().getJobId())){
+        if (!this.jobAdvertisementCheckService.isActive(dto.toApply().getJobId())) {
             throw new NotFountException(Helper.JOB_AD_NOT_ACTIVE);
         }
         Optional<User> applyUser = userCheckService.getUserById(dto.toApply().getUserId());
@@ -49,6 +51,7 @@ public class ApplicationManager implements ApplicationService {
         if (Objects.equals(this.applicationRepository.getUserIdByJobId(dto.toApply().getJobId()), dto.toApply().getUserId())) {
             throw new AlreadyCreatedException(Helper.USER_ALREADY_APPLIED);
         }
+        log.info("Application save successfully : " + dto.toApply());
         this.applicationRepository.save(dto.toApply());
     }
 
@@ -69,6 +72,7 @@ public class ApplicationManager implements ApplicationService {
             throw new NotFountException(Helper.USER_NOT_FOUND);
         }
         apply.setExperienceYear(experienceYear);
+        log.info("Application experience year updated successfully : " + apply.getExperienceYear());
         this.applicationRepository.save(apply);
         return apply;
     }
@@ -85,6 +89,7 @@ public class ApplicationManager implements ApplicationService {
             throw new NotFountException(Helper.USER_NOT_FOUND);
         }
         apply.setPersonalInfo(personalInfo);
+        log.info("Application personal info updated successfully : " + apply.getPersonalInfo());
         this.applicationRepository.save(apply);
         return apply;
     }

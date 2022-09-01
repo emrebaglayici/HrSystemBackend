@@ -57,7 +57,7 @@ public class StepManager implements StepService {
 
         Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementCheckService.getJobById(application.getJobId());
         JobAdvertisement jobAdvertisement = jobAdvertisementOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-        boolean isNameOffer=step.getName().equals(Steps.OFFER.getName());
+        boolean isNameOffer = step.getName().equals(Steps.OFFER.getName());
         if (step.getName().equals(Steps.HR.getName()))
             throw new PermissionException(Helper.HR_CAN_ONLY_FIRST_STEP);
         if (steps.getOrderCount() >= jobAdvertisement.getInterviewCount())
@@ -77,22 +77,20 @@ public class StepManager implements StepService {
             steps.setNotes(step.getNotes());
             if (!isNameOffer) {
                 steps.setOrderCount(steps.getOrderCount() + 1);
-            }
-   //         if (step.getName().equals(Steps.OFFER.getName())) {
-            else{
+            } else {
                 steps.setOrderCount(jobAdvertisement.getInterviewCount() + 1);
                 log.info("Offer given to interviewer and steps are done.");
             }
+            log.info("Step continue with success : " + steps);
             this.stepRepository.save(steps);
             return steps;
-
         }
         if (isNameOffer) {
             steps.setName(step.getName());
             steps.setResult(step.isResult());
             steps.setNotes(step.getNotes());
             steps.setOrderCount(steps.getOrderCount() + 1);
-            log.info(steps.getOrderCount().toString());
+            log.info("Steps are done : " + steps);
             this.stepRepository.save(steps);
             return steps;
         }

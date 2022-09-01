@@ -7,6 +7,5 @@ import java.util.Optional;
 public interface JobAdvertisementCheckService {
     boolean existsJob(Long id);
     boolean isActive(Long id);
-
     Optional<JobAdvertisement> getJobById(Long id);
 }

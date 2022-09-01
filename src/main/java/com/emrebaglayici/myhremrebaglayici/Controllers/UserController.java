@@ -1,4 +1,5 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
+
 import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserDto;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final UserService userService;
+
     public UserController(UserService userService) {
         this.userService = userService;
     }
