@@ -1,10 +1,10 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.StepService;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepDto;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepListDto;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepUpdateDto;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IStep;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.StepDtos.StepCreateDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.StepDtos.StepDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.StepDtos.StepListDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.StepDtos.StepUpdateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Step;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -14,23 +14,23 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/step")
+@RequestMapping("/api/v1/")
 public class StepController {
-    private final StepService stepService;
+    private final IStep IStep;
 
-    public StepController(StepService stepService) {
-        this.stepService = stepService;
+    public StepController(IStep IStep) {
+        this.IStep = IStep;
     }
 
     @PostMapping("step")
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody StepCreateDto dto) {
-        this.stepService.createStep(dto);
+        this.IStep.createStep(dto);
     }
 
     @GetMapping("steps")
     public Page<StepListDto> listStep(Pageable pageable) {
-        return stepService.listStep(pageable)
+        return IStep.listStep(pageable)
                 .map(step -> StepListDto.builder()
                         .id(step.getId())
                         .name(step.getName())
@@ -42,7 +42,7 @@ public class StepController {
 
     @PatchMapping("/updateStep/")
     public StepDto updateStep(@RequestBody StepUpdateDto dto) {
-        Step step = stepService.updateStep(dto.toStep());
+        Step step = IStep.updateStep(dto.toStep());
         return StepDto.builder()
                 .id(step.getId())
                 .name(step.getName())

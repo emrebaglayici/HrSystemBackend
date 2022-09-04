@@ -1,6 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementCheckService;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IJobAdvertisementCheck;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import org.springframework.stereotype.Service;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class JobAdvertisementCheckManager implements JobAdvertisementCheckService {
+public class JobAdvertisementCheckManager implements IJobAdvertisementCheck {
     private final JobAdvertisementRepository jobAdvertisementRepository;
     public JobAdvertisementCheckManager(JobAdvertisementRepository jobAdvertisementRepository) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;

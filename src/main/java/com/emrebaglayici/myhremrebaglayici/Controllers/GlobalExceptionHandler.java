@@ -1,6 +1,7 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
 import com.emrebaglayici.myhremrebaglayici.Exceptions.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -8,11 +9,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
 
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({NotFountException.class})
     public ResponseEntity<CustomError> handleNotFoundException(RuntimeException ex) {
+        log.info("NotFountException occurred");
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(CustomError.builder()
                         .status(HttpStatus.NOT_FOUND.value())
@@ -24,6 +27,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({FillTheBlanksException.class})
     public ResponseEntity<CustomError> handleFillTheBlanksException(RuntimeException ex) {
+        log.info("FillTheBlanksException occurred");
         return ResponseEntity.status(HttpStatus.NOT_EXTENDED)
                 .body(CustomError.builder()
                         .status(HttpStatus.NOT_EXTENDED.value())
@@ -35,6 +39,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({AlreadyCreatedException.class})
     public ResponseEntity<CustomError> alreadyCreatedException(RuntimeException ex) {
+        log.info("AlreadyCreatedException occurred");
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body(CustomError.builder()
                         .status(HttpStatus.CONFLICT.value())
@@ -43,8 +48,10 @@ public class GlobalExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .build());
     }
+
     @ExceptionHandler({PermissionException.class})
     public ResponseEntity<CustomError> permissionException(RuntimeException ex) {
+        log.info("PermissionException occurred");
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(CustomError.builder()
                         .status(HttpStatus.FORBIDDEN.value())
@@ -53,8 +60,10 @@ public class GlobalExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .build());
     }
+
     @ExceptionHandler({InterviewFailException.class})
     public ResponseEntity<CustomError> interviewFailException(RuntimeException ex) {
+        log.info("InterviewFailException occurred");
         return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
                 .body(CustomError.builder()
                         .status(HttpStatus.EXPECTATION_FAILED.value())
@@ -63,5 +72,4 @@ public class GlobalExceptionHandler {
                         .timestamp(LocalDateTime.now())
                         .build());
     }
-
 }

@@ -1,31 +1,38 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.ApplicationService;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplicationCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplicationDto;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IApplication;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.ApplicationCreateDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.ApplicationDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.ApplicationUpdateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Application;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+
 @RestController
-@RequestMapping("/api/v1/apply")
+@RequestMapping("/api/v1/")
 public class ApplicationController {
-    private final ApplicationService applicationService;
-    public ApplicationController(ApplicationService applicationService) {
-        this.applicationService = applicationService;
+    private final IApplication IApplication;
+
+    public ApplicationController(IApplication IApplication) {
+        this.IApplication = IApplication;
     }
 
-    @PostMapping("apply")
+    @PostMapping("application")
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody ApplicationCreateDto dto) {
-        applicationService.applyJob(dto);
+        IApplication.applyJob(dto);
     }
 
-    @GetMapping("applies")
+    @GetMapping("applications")
     public Page<ApplicationDto> listApplies(Pageable pageable) {
-        return applicationService.listApply(pageable).map(apply -> ApplicationDto.builder()
+        return IApplication.listApply(pageable).map(apply -> ApplicationDto.builder()
                 .id(apply.getId())
                 .userId(apply.getUserId())
                 .jobId(apply.getJobId())
@@ -34,13 +41,29 @@ public class ApplicationController {
                 .appliedTime(apply.getAppliedTime()).build());
     }
 
-    @PatchMapping("/experienceYear/{id}/{userId}/{experienceYear}")
-    public Application updateApplyExperienceYear(@PathVariable Long id, @PathVariable Long userId, @PathVariable int experienceYear) {
-        return this.applicationService.updateExperienceYear(id, userId, experienceYear);
-    }
+    @PatchMapping("updateApplication/{id}/{userId}")
+    public ApplicationDto update(@PathVariable Long id, @PathVariable Long userId, @RequestBody ApplicationUpdateDto dto) {
+        Application application = IApplication.getApplicationById(id).orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
 
-    @PatchMapping("/personalInfo/{id}/{userId}/{personalInfo}")
-    public Application updateApplyPersonalInfo(@PathVariable Long id, @PathVariable Long userId, @PathVariable String personalInfo) {
-        return this.applicationService.updatePersonalInfo(id, userId, personalInfo);
+        boolean needUpdate = false;
+        if (StringUtils.hasLength(dto.toApply().getPersonalInfo())) {
+            application.setPersonalInfo(dto.toApply().getPersonalInfo());
+            needUpdate = true;
+        }
+        if (dto.toApply().getExperienceYear() != application.getExperienceYear()
+                && dto.toApply().getExperienceYear() != 0) {
+            application.setExperienceYear(dto.toApply().getExperienceYear());
+            needUpdate = true;
+        }
+        if (needUpdate)
+            IApplication.update(id, userId, application);
+        return ApplicationDto.builder()
+                .id(id)
+                .userId(userId)
+                .jobId(application.getJobId())
+                .experienceYear(dto.toApply().getExperienceYear())
+                .personalInfo(dto.toApply().getPersonalInfo())
+                .appliedTime(LocalDateTime.now())
+                .build();
     }
 }

@@ -1,4 +1,4 @@
-package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
+package com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos;
 
 import com.emrebaglayici.myhremrebaglayici.Entities.Application;
 import lombok.Setter;
@@ -6,16 +6,12 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Setter
-public class ApplicationCreateDto {
-    private Long jobId;
-    private Long userId;
+public class ApplicationUpdateDto {
     private int experienceYear;
     private String personalInfo;
 
     public Application toApply() {
         return Application.builder()
-                .jobId(this.jobId)
-                .userId(this.userId)
                 .experienceYear(this.experienceYear)
                 .personalInfo(this.personalInfo)
                 .appliedTime(LocalDateTime.now())

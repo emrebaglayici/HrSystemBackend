@@ -1,7 +1,6 @@
-package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
+package com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos;
 import lombok.Builder;
 import lombok.Data;
-import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -12,6 +11,6 @@ public class JobAdvertisementDto {
     private String type;
     private String description;
     private double salary;
-    private double active;
+    private boolean active;
     private int interviewCount;
 }

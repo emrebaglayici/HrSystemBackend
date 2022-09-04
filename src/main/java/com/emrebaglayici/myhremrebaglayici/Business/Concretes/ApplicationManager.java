@@ -1,10 +1,11 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.ApplicationService;
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementCheckService;
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserCheckService;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.ApplicationCreateDto;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IApplication;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IJobAdvertisementCheck;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IUserCheck;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.ApplicationCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Application;
+import com.emrebaglayici.myhremrebaglayici.Entities.Role;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.AlreadyCreatedException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
@@ -21,34 +22,38 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class ApplicationManager implements ApplicationService {
+public class ApplicationManager implements IApplication {
 
     private final ApplicationRepository applicationRepository;
-    private final UserCheckService userCheckService;
-    private final JobAdvertisementCheckService jobAdvertisementCheckService;
+    private final IUserCheck iUserCheck;
+    private final IJobAdvertisementCheck iJobAdvertisementCheck;
 
     public ApplicationManager(ApplicationRepository applicationRepository,
-                              UserCheckService userCheckService,
-                              JobAdvertisementCheckService jobAdvertisementCheckService) {
+                              IUserCheck iUserCheck,
+                              IJobAdvertisementCheck iJobAdvertisementCheck) {
         this.applicationRepository = applicationRepository;
-        this.userCheckService = userCheckService;
-        this.jobAdvertisementCheckService = jobAdvertisementCheckService;
+        this.iUserCheck = iUserCheck;
+        this.iJobAdvertisementCheck = iJobAdvertisementCheck;
     }
 
     @Override
     public void applyJob(ApplicationCreateDto dto) {
-        if (!jobAdvertisementCheckService.existsJob(dto.toApply().getJobId())) {
+        if (!iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())) {
+            log.info("Job advertisement with id : " + dto.toApply().getJobId() + " is not found.");
             throw new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND);
         }
-        if (!this.jobAdvertisementCheckService.isActive(dto.toApply().getJobId())) {
+        if (!this.iJobAdvertisementCheck.isActive(dto.toApply().getJobId())) {
+            log.info("Job Advertisement with id : " + dto.toApply().getJobId() + " is not active anymore");
             throw new NotFountException(Helper.JOB_AD_NOT_ACTIVE);
         }
-        Optional<User> applyUser = userCheckService.getUserById(dto.toApply().getUserId());
+        Optional<User> applyUser = iUserCheck.getUserById(dto.toApply().getUserId());
         User user = applyUser.orElseThrow(() -> new NotFountException("User with id : " + dto.toApply().getUserId() + " is not found"));
-        if (userCheckService.checkHr(dto.toApply().getUserId())) {
+        if (!applyUser.get().getRole().equals(Role.CANDIDATES.getName())) {
+            log.info("User with id : " + user.getId() + " is not candidates");
             throw new PermissionException(Helper.HR_CANNOT_APPLY_JOB);
         }
         if (Objects.equals(this.applicationRepository.getUserIdByJobId(dto.toApply().getJobId()), dto.toApply().getUserId())) {
+            log.info("User already applied this application");
             throw new AlreadyCreatedException(Helper.USER_ALREADY_APPLIED);
         }
         log.info("Application save successfully : " + dto.toApply());
@@ -61,36 +66,23 @@ public class ApplicationManager implements ApplicationService {
     }
 
     @Override
-    public Application updateExperienceYear(Long id, Long userId, int experienceYear) {
-        Optional<Application> applyOptional = this.applicationRepository.findById(id);
-        Application apply = applyOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
-        Optional<User> userOptional = this.userCheckService.getUserById(userId);
-        User user = userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
-        if (!this.userCheckService.checkCandidates(userId))
-            throw new PermissionException(Helper.USER_MUST_BE_CANDIDATES);
-        if (!Objects.equals(apply.getUserId(), userId)) {
-            throw new NotFountException(Helper.USER_NOT_FOUND);
-        }
-        apply.setExperienceYear(experienceYear);
-        log.info("Application experience year updated successfully : " + apply.getExperienceYear());
-        this.applicationRepository.save(apply);
-        return apply;
+    public Optional<Application> getApplicationById(Long id) {
+        return applicationRepository.findById(id);
     }
 
     @Override
-    public Application updatePersonalInfo(Long id, Long userId, String personalInfo) {
-        Optional<Application> applyOptional = this.applicationRepository.findById(id);
-        Application apply = applyOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
-        Optional<User> userOptional = this.userCheckService.getUserById(userId);
+    public void update(Long id, Long userId, Application application) {
+        Optional<User> userOptional = this.iUserCheck.getUserById(userId);
         User user = userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
-        if (!this.userCheckService.checkCandidates(userId))
+        if (!userOptional.get().getRole().equals(Role.CANDIDATES.getName())) {
+            log.info("User with id : " + user.getId() + " is not candidates");
             throw new PermissionException(Helper.USER_MUST_BE_CANDIDATES);
-        if (!Objects.equals(apply.getUserId(), userId)) {
+        }
+        if (!Objects.equals(application.getUserId(), userId)) {
+            log.info("Application not found with id : " + application.getUserId());
             throw new NotFountException(Helper.USER_NOT_FOUND);
         }
-        apply.setPersonalInfo(personalInfo);
-        log.info("Application personal info updated successfully : " + apply.getPersonalInfo());
-        this.applicationRepository.save(apply);
-        return apply;
+        log.info("Application updated successfully");
+        this.applicationRepository.save(application);
     }
 }

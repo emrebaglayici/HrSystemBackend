@@ -1,6 +1,6 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.ApplicationCheckService;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IApplicationCheck;
 import com.emrebaglayici.myhremrebaglayici.Entities.Application;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplicationRepository;
 import org.springframework.stereotype.Service;
@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class ApplicationCheckManager implements ApplicationCheckService {
+public class ApplicationCheckManager implements IApplicationCheck {
     private final ApplicationRepository applicationRepository;
 
     public ApplicationCheckManager(ApplicationRepository applicationRepository) {

@@ -1,33 +1,40 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementService;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementDto;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IJobAdvertisement;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvertisementCreateDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvertisementDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvertisementUpdateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
-@RequestMapping("/api/v1/jobAds")
+@RequestMapping("/api/v1/")
 public class JobAdvertisementController {
-    private final JobAdvertisementService jobAdvertisementService;
+    private final IJobAdvertisement IJobAdvertisement;
 
-    public JobAdvertisementController(JobAdvertisementService jobAdvertisementService) {
-        this.jobAdvertisementService = jobAdvertisementService;
+    public JobAdvertisementController(IJobAdvertisement IJobAdvertisement) {
+        this.IJobAdvertisement = IJobAdvertisement;
+
     }
 
-    @PostMapping("jobAd")
+    @PostMapping("jobAdvertisement")
     @ResponseStatus(HttpStatus.CREATED)
     public void createJobAd(@RequestBody JobAdvertisementCreateDto dto) {
-        this.jobAdvertisementService.addJobAds(dto);
+        this.IJobAdvertisement.addJobAds(dto);
     }
 
-    @GetMapping("jobAds")
+    @GetMapping("jobAdvertisements")
     public Page<JobAdvertisementDto> listJobAds(Pageable pageable) {
-        return jobAdvertisementService.listJobAds(pageable)
+        return IJobAdvertisement.listJobAds(pageable)
                 .map(jobAdvertisement -> JobAdvertisementDto.builder()
                         .id(jobAdvertisement.getId())
                         .userId(jobAdvertisement.getUserId())
@@ -38,35 +45,50 @@ public class JobAdvertisementController {
                         .build());
     }
 
-    @PatchMapping("/updateSalary/{id}/{userId}/{salary}")
-    public JobAdvertisement updateJobAdSalary(@PathVariable Long id, @PathVariable Long userId, @PathVariable double salary) {
-        return this.jobAdvertisementService.updateSalaryById(id, userId, salary);
-    }
+    @PatchMapping("/updateJobAd/{id}/{userId}")
+    public JobAdvertisementDto update(@PathVariable Long id, @PathVariable Long userId, @RequestBody JobAdvertisementUpdateDto dto) {
+        JobAdvertisement jobAdvertisement = IJobAdvertisement.findById(id).orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
 
-    @PatchMapping("/updateType/{id}/{userId}/{type}")
-    public JobAdvertisement updateJobAdType(@PathVariable Long id, @PathVariable Long userId, @PathVariable String type) {
-        return this.jobAdvertisementService.updateTypeById(id, userId, type);
-    }
+        if (dto.toJobAds().getInterviewCount() > 5 || dto.toJobAds().getInterviewCount() == 0)
+            throw new NotFountException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
 
-    @PatchMapping("/updateDesc/{id}/{userId}/{desc}")
-    public JobAdvertisement updateJobAdDescription(@PathVariable Long id, @PathVariable Long userId, @PathVariable String desc) {
-        return this.jobAdvertisementService.updateDescriptionById(id, userId, desc);
-    }
+        boolean needUpdate = false;
+        if (StringUtils.hasLength(dto.toJobAds().getType())) {
+            jobAdvertisement.setType(dto.toJobAds().getType());
+            needUpdate = true;
+        }
+        if (StringUtils.hasLength(dto.toJobAds().getDescription())) {
+            jobAdvertisement.setDescription(dto.toJobAds().getDescription());
+            needUpdate = true;
+        }
+        if (dto.toJobAds().getSalary() != jobAdvertisement.getSalary() && dto.toJobAds().getSalary() != 0.0) {
+            jobAdvertisement.setSalary(dto.toJobAds().getSalary());
+            needUpdate = true;
+        }
+        if (dto.toJobAds().isActive() != jobAdvertisement.isActive()) {
+            jobAdvertisement.setActive(dto.toJobAds().isActive());
+            needUpdate = true;
+        }
+        if (dto.toJobAds().getInterviewCount() != jobAdvertisement.getInterviewCount()) {
+            jobAdvertisement.setInterviewCount(dto.toJobAds().getInterviewCount());
+            needUpdate = true;
+        }
+        if (needUpdate)
+            IJobAdvertisement.update(id, userId, jobAdvertisement);
 
-    @PatchMapping("/updateActive/{id}/{userId}/{active}")
-    public JobAdvertisement updateJobActive(@PathVariable Long id, @PathVariable Long userId, @PathVariable boolean active) {
-        return this.jobAdvertisementService.updateActive(id, userId, active);
-    }
-
-    @PatchMapping("/updateInterviewCount/{id}/{userId}/{interviewCount}")
-    public JobAdvertisement updateInterviewCount(@PathVariable Long id, @PathVariable Long userId, @PathVariable int interviewCount) {
-        return this.jobAdvertisementService.updateInterviewCount(id, userId, interviewCount);
+        return JobAdvertisementDto.builder()
+                .id(id)
+                .userId(userId)
+                .type(jobAdvertisement.getType())
+                .description(jobAdvertisement.getDescription())
+                .salary(jobAdvertisement.getSalary())
+                .active(jobAdvertisement.isActive())
+                .interviewCount(jobAdvertisement.getInterviewCount())
+                .build();
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, @RequestParam Long userId) {
-        return ResponseEntity.ok(this.jobAdvertisementService.deleteById(id, userId));
+        return ResponseEntity.ok(this.IJobAdvertisement.deleteById(id, userId));
     }
-
-
 }

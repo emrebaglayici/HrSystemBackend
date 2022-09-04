@@ -1,11 +1,14 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementService;
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserCheckService;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.JobAdvertisementCreateDto;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IJobAdvertisement;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IUserCheck;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
+import com.emrebaglayici.myhremrebaglayici.Entities.Role;
+import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import lombok.extern.slf4j.Slf4j;
@@ -13,33 +16,45 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
 @Service
-public class JobAdvertisementManager implements JobAdvertisementService {
+public class JobAdvertisementManager implements IJobAdvertisement {
 
     private final JobAdvertisementRepository jobAdvertisementRepository;
-    private final UserCheckService userCheckService;
+    private final IUserCheck iUserCheck;
 
     public JobAdvertisementManager(JobAdvertisementRepository jobAdvertisementRepository,
-                                   UserCheckService userCheckService) {
+                                   IUserCheck iUserCheck) {
         this.jobAdvertisementRepository = jobAdvertisementRepository;
-        this.userCheckService = userCheckService;
+        this.iUserCheck = iUserCheck;
+    }
+
+    @Override
+    public Optional<JobAdvertisement> findById(Long id) {
+        return this.jobAdvertisementRepository.findById(id);
     }
 
     @Override
     public void addJobAds(JobAdvertisementCreateDto dto) {
+        Optional<User> userOptional = iUserCheck.getUserById(dto.toJobAds().getUserId());
+        userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
+
+        if (!userOptional.get().getRole().equals(Role.HR.getName())) {
+            log.info("User with id : " + userOptional.get().getId() + " is not Hr.");
+            throw new NotFountException(Helper.USER_MUST_BE_HR);
+        }
+
         if (dto.toJobAds().getInterviewCount() > 5 || dto.toJobAds().getInterviewCount() == 0) {
+            log.info("Interview count must be 1 to 5 -> current : " + dto.toJobAds().getInterviewCount());
             throw new NotFountException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
         }
-        if (dto.toJobAds().getUserId() != 0 && !dto.toJobAds().getType().equals("") &&
+        if (!dto.toJobAds().getType().equals("") &&
                 dto.toJobAds().getSalary() != 0 && !dto.toJobAds().getDescription().equals("")) {
-            if (userCheckService.checkHr(dto.toJobAds().getUserId())) {
-                log.info("Job advertisement added successfully : " + dto.toJobAds());
-                this.jobAdvertisementRepository.save(dto.toJobAds());
-            } else
-                throw new NotFountException(Helper.USER_MUST_BE_EXISTS_AND_HR);
+            log.info("Job advertisement added successfully : " + dto.toJobAds());
+            this.jobAdvertisementRepository.save(dto.toJobAds());
         } else
             throw new FillTheBlanksException(Helper.FILL_ALL_BLANKS);
     }
@@ -50,76 +65,31 @@ public class JobAdvertisementManager implements JobAdvertisementService {
     }
 
     @Override
-    public JobAdvertisement updateSalaryById(Long id, Long userId, double salary) {
-        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
-        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-        if (!userCheckService.checkHr(userId)) {
-            throw new NotFountException(Helper.USER_MUST_BE_HR);
+    public void update(Long id, Long userId, JobAdvertisement jobAdvertisement) {
+        Optional<User> userOptional = iUserCheck.getUserById(userId);
+        userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
+        if (!Objects.equals(jobAdvertisement.getUserId(), userId)) {
+            log.info("Created user update this advertisement");
+            throw new PermissionException("Only person who can update this advertisement is created user");
         }
-        jobAds.setSalary(salary);
-        log.info("Job advertisement salary updated successfully : " + jobAds.getSalary());
-        this.jobAdvertisementRepository.save(jobAds);
-        return jobAds;
-    }
-
-    @Override
-    public JobAdvertisement updateActive(Long id, Long userId, boolean active) {
-        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
-        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-        if (!this.userCheckService.checkHr(userId))
-            throw new NotFountException(Helper.USER_MUST_BE_EXISTS_AND_HR);
-        jobAds.setActive(active);
-        log.info("Job advertisement active situation updated successfully : " + jobAds.isActive());
-        this.jobAdvertisementRepository.save(jobAds);
-        return jobAds;
-    }
-
-    @Override
-    public JobAdvertisement updateInterviewCount(Long id, Long userId, int interviewCount) {
-        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
-        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-        if (!this.userCheckService.checkHr(userId))
-            throw new NotFountException(Helper.USER_MUST_BE_EXISTS_AND_HR);
-        if (interviewCount > 5 || interviewCount == 0)
-            throw new NotFountException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
-        jobAds.setInterviewCount(interviewCount);
-        log.info("Job advertisement interview count updated successfully : " + jobAds.getInterviewCount());
-        this.jobAdvertisementRepository.save(jobAds);
-        return jobAds;
-    }
-
-    @Override
-    public JobAdvertisement updateTypeById(Long id, Long userId, String type) {
-        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
-        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-        if (!userCheckService.checkHr(userId))
-            throw new NotFountException(Helper.USER_MUST_BE_EXISTS_AND_HR);
-        jobAds.setType(type);
-        log.info("Job advertisement type updated successfully : " + jobAds.getType());
-        this.jobAdvertisementRepository.save(jobAds);
-        return jobAds;
-    }
-
-    @Override
-    public JobAdvertisement updateDescriptionById(Long id, Long userId, String description) {
-        Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
-        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-        if (!this.userCheckService.checkHr(userId))
-            throw new NotFountException(Helper.USER_MUST_BE_EXISTS_AND_HR);
-        jobAds.setDescription(description);
-        log.info("Job advertisement description updated successfully : " + jobAds.getDescription());
-        this.jobAdvertisementRepository.save(jobAds);
-        return jobAds;
+        log.info("Job advertisement updated successfully");
+        this.jobAdvertisementRepository.save(jobAdvertisement);
     }
 
     @Override
     public JobAdvertisement deleteById(Long id, Long userId) {
         Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
         JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-        if (!this.userCheckService.checkHr(userId))
-            throw new NotFountException(Helper.USER_MUST_BE_EXISTS_AND_HR);
+        Optional<User> userOptional = this.iUserCheck.getUserById(userId);
+        User user = userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
+        if (!userOptional.get().getRole().equals(Role.HR.getName())) {
+            log.info("User with id : " + userOptional.get().getId() + " is not Hr.");
+            throw new NotFountException(Helper.USER_MUST_BE_HR);
+        }
         log.info("Job advertisement deleted successfully : " + jobAds);
         this.jobAdvertisementRepository.delete(jobAds);
         return jobAds;
     }
+
+
 }

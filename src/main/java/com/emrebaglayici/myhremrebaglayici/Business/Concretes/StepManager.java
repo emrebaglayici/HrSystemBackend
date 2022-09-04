@@ -1,8 +1,8 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.JobAdvertisementCheckService;
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.StepService;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.StepCreateDto;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IJobAdvertisementCheck;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IStep;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.StepDtos.StepCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Application;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Entities.Step;
@@ -22,27 +22,34 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-public class StepManager implements StepService {
+public class StepManager implements IStep {
     private final StepRepository stepRepository;
     private final ApplicationCheckManager applicationCheckManager;
-    private final JobAdvertisementCheckService jobAdvertisementCheckService;
+    private final IJobAdvertisementCheck iJobAdvertisementCheck;
 
-    public StepManager(StepRepository stepRepository, ApplicationCheckManager applicationCheckManager, JobAdvertisementCheckService jobAdvertisementCheckService) {
+    public StepManager(StepRepository stepRepository, ApplicationCheckManager applicationCheckManager, IJobAdvertisementCheck iJobAdvertisementCheck) {
         this.stepRepository = stepRepository;
         this.applicationCheckManager = applicationCheckManager;
-        this.jobAdvertisementCheckService = jobAdvertisementCheckService;
+        this.iJobAdvertisementCheck = iJobAdvertisementCheck;
     }
 
     @Override
     public void createStep(StepCreateDto step) {
-        if (!step.toStep().isResult())
+        if (!step.toStep().isResult()){
+            log.info("Step must be true at first.");
             throw new NotFountException(Helper.STEP_MUST_BE_TRUE_AT_FIRST);
-        if (step.toStep().getNotes().isEmpty() || step.toStep().getName().isEmpty())
+        }
+        if (step.toStep().getNotes().isEmpty() || step.toStep().getName().isEmpty()){
+            log.info("Step notes or name empty : "+ step.toStep().getNotes()+" "+step.toStep().getName());
             throw new FillTheBlanksException(Helper.FILL_ALL_BLANKS);
+        }
         Optional<Application> applyOptional = this.applicationCheckManager.findById(step.toStep().getApplicationId());
         Application application = applyOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
-        if (!step.toStep().getName().equals(Steps.HR.getName()))
+        if (!step.toStep().getName().equals(Steps.HR.getName())){
+            log.info("First step must be Hr.");
             throw new NotFountException(Helper.FIRST_STEP_MUST_BE_HR);
+        }
+        log.info("Step created successfully");
         step.toStep().setOrderCount(1);
         this.stepRepository.save(step.toStep());
     }
@@ -55,13 +62,17 @@ public class StepManager implements StepService {
         Optional<Application> applicationOptional = this.applicationCheckManager.findById(step.getApplicationId());
         Application application = applicationOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
 
-        Optional<JobAdvertisement> jobAdvertisementOptional = this.jobAdvertisementCheckService.getJobById(application.getJobId());
+        Optional<JobAdvertisement> jobAdvertisementOptional = this.iJobAdvertisementCheck.getJobById(application.getJobId());
         JobAdvertisement jobAdvertisement = jobAdvertisementOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
         boolean isNameOffer = step.getName().equals(Steps.OFFER.getName());
-        if (step.getName().equals(Steps.HR.getName()))
+        if (step.getName().equals(Steps.HR.getName())){
+            log.info("Hr must be only first step");
             throw new PermissionException(Helper.HR_CAN_ONLY_FIRST_STEP);
-        if (steps.getOrderCount() >= jobAdvertisement.getInterviewCount())
+        }
+        if (steps.getOrderCount() >= jobAdvertisement.getInterviewCount()){
+            log.info("Step count reached , steps are over -> step count : "+steps.getOrderCount());
             throw new PermissionException(Helper.STEP_COUNT_REACHED);
+        }
         if (!steps.isResult()) {
             steps.setName(step.getName());
             steps.setResult(step.isResult());
@@ -94,6 +105,7 @@ public class StepManager implements StepService {
             this.stepRepository.save(steps);
             return steps;
         }
+        log.info("Offer must be last step");
         throw new PermissionException(Helper.OFFER_MUST_BE_LAST_STEP);
     }
 

@@ -1,4 +1,4 @@
-package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
+package com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.StepDtos;
 
 import lombok.Builder;
 import lombok.Data;

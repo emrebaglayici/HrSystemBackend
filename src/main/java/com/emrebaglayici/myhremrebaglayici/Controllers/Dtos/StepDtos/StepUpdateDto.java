@@ -1,4 +1,4 @@
-package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
+package com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.StepDtos;
 
 import com.emrebaglayici.myhremrebaglayici.Entities.Step;
 import lombok.Setter;

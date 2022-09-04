@@ -1,13 +1,8 @@
 package com.emrebaglayici.myhremrebaglayici.Business.Abstracts;
 
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
-
 import java.util.Optional;
 
-public interface UserCheckService {
-    boolean checkHr(Long id);
-
-    boolean checkCandidates(Long id);
-
+public interface IUserCheck {
     Optional<User> getUserById(Long userId);
 }

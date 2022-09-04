@@ -1,8 +1,8 @@
 package com.emrebaglayici.myhremrebaglayici.Controllers;
 
-import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.UserService;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserCreateDto;
-import com.emrebaglayici.myhremrebaglayici.Controllers.Dto.UserDto;
+import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IUser;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.UserDtos.UserCreateDto;
+import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.UserDtos.UserDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,24 +14,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/")
 public class UserController {
-    private final UserService userService;
+    private final IUser IUser;
 
-    public UserController(UserService userService) {
-        this.userService = userService;
+    public UserController(IUser IUser) {
+        this.IUser = IUser;
     }
 
     @PostMapping("user")
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody UserCreateDto dto) {
-        this.userService.saveUser(dto);
+        this.IUser.saveUser(dto);
     }
 
     @GetMapping("users")
     public Page<UserDto> listUsers(@PageableDefault(page = 0, size = 30) @SortDefault.SortDefaults
             ({@SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable) {
-        return userService.listUsers(pageable)
+        return IUser.listUsers(pageable)
                 .map(user -> UserDto.builder()
                         .id(user.getId())
                         .name(user.getName())
@@ -40,13 +40,18 @@ public class UserController {
 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("user/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        return ResponseEntity.ok(this.userService.deleteById(id));
+        return ResponseEntity.ok(this.IUser.deleteById(id));
     }
 
-    @PatchMapping("/users/{id}/{name}")
-    public User updateUserName(@PathVariable Long id, @PathVariable String name) {
-        return this.userService.updateNameById(id, name);
+    @PatchMapping("/{id}/{name}")
+    public UserDto updateUserName(@PathVariable Long id, @PathVariable String name) {
+        User user= IUser.updateNameById(id,name);
+        return UserDto.builder()
+                .id(id)
+                .name(name)
+                .role(user.getRole())
+                .build();
     }
 }

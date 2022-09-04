@@ -1,4 +1,4 @@
-package com.emrebaglayici.myhremrebaglayici.Controllers.Dto;
+package com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.UserDtos;
 
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import lombok.Setter;
