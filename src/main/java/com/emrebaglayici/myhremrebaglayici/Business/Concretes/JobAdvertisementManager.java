@@ -44,7 +44,7 @@ public class JobAdvertisementManager implements IJobAdvertisement {
 
         if (!userOptional.get().getRole().equals(Role.HR.getName())) {
             log.info("User with id : " + userOptional.get().getId() + " is not Hr.");
-            throw new NotFountException(Helper.USER_MUST_BE_HR);
+            throw new PermissionException(Helper.USER_MUST_BE_HR);
         }
 
         if (dto.toJobAds().getInterviewCount() > 5 || dto.toJobAds().getInterviewCount() == 0) {

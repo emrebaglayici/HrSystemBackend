@@ -31,9 +31,6 @@ public class UserManager implements IUser {
             log.info("User name or role empty");
             throw new FillTheBlanksException(Helper.FILL_ALL_BLANKS);
         }
-        log.info(dto.toUser().getRole());
-        log.info(Role.CANDIDATES.getName());
-        log.info(Role.HR.getName());
         if (!dto.toUser().getRole().equals(Role.CANDIDATES.getName()) && !dto.toUser().getRole().equals(Role.HR.getName())) {
             log.info("Role not found");
             throw new NotFountException(Helper.ROLE_NOT_FOUND);
@@ -44,6 +41,8 @@ public class UserManager implements IUser {
 
     @Override
     public User deleteById(Long id) {
+        System.out.println(id);
+        System.out.println(userRepository.findById(id));
         Optional<User> userOptional=userRepository.findById(id);
         User user = userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
         log.info("User deleted successfully : " + user);
