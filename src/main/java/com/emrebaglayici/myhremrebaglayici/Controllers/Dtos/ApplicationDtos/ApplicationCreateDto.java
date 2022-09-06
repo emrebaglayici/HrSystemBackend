@@ -18,7 +18,7 @@ public class ApplicationCreateDto {
                 .userId(this.userId)
                 .experienceYear(this.experienceYear)
                 .personalInfo(this.personalInfo)
-                .appliedTime(LocalDateTime.now())
+                .appliedTime(LocalDateTime.now().withNano(0))
                 .build();
     }
 }

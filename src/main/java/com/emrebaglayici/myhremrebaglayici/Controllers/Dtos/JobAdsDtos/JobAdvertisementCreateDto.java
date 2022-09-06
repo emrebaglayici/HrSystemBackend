@@ -20,7 +20,7 @@ public class JobAdvertisementCreateDto {
                 .salary(this.salary)
                 .active(this.active)
                 .interviewCount(this.interviewCount)
-                .creationTime(LocalDateTime.now())
+                .creationTime(LocalDateTime.now().withNano(0))
                 .build();
     }
 }
