@@ -16,22 +16,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/")
 public class UserController {
-    private final IUser IUser;
+    private final IUser iUser;
 
-    public UserController(IUser IUser) {
-        this.IUser = IUser;
+    public UserController(IUser iUser) {
+        this.iUser = iUser;
     }
 
     @PostMapping("user")
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody UserCreateDto dto) {
-        this.IUser.saveUser(dto);
+        this.iUser.saveUser(dto);
     }
 
     @GetMapping("users")
     public Page<UserDto> listUsers(@PageableDefault(page = 0, size = 30) @SortDefault.SortDefaults
             ({@SortDefault(sort = "id", direction = Sort.Direction.ASC)}) Pageable pageable) {
-        return IUser.listUsers(pageable)
+        return iUser.listUsers(pageable)
                 .map(user -> UserDto.builder()
                         .id(user.getId())
                         .name(user.getName())
@@ -42,12 +42,12 @@ public class UserController {
 
     @DeleteMapping("user/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        return ResponseEntity.ok(this.IUser.deleteById(id));
+        return ResponseEntity.ok(this.iUser.deleteById(id));
     }
 
     @PatchMapping("/{id}/{name}")
     public UserDto updateUserName(@PathVariable Long id, @PathVariable String name) {
-        User user= IUser.updateNameById(id,name);
+        User user= iUser.updateNameById(id,name);
         return UserDto.builder()
                 .id(id)
                 .name(name)

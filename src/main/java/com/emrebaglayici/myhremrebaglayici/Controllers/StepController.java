@@ -16,21 +16,21 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/")
 public class StepController {
-    private final IStep IStep;
+    private final IStep iStep;
 
-    public StepController(IStep IStep) {
-        this.IStep = IStep;
+    public StepController(IStep iStep) {
+        this.iStep = iStep;
     }
 
     @PostMapping("step")
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody StepCreateDto dto) {
-        this.IStep.createStep(dto);
+        this.iStep.createStep(dto);
     }
 
     @GetMapping("steps")
     public Page<StepListDto> listStep(Pageable pageable) {
-        return IStep.listStep(pageable)
+        return iStep.listStep(pageable)
                 .map(step -> StepListDto.builder()
                         .id(step.getId())
                         .name(step.getName())
@@ -42,7 +42,7 @@ public class StepController {
 
     @PatchMapping("/updateStep/")
     public StepDto updateStep(@RequestBody StepUpdateDto dto) {
-        Step step = IStep.updateStep(dto.toStep());
+        Step step = iStep.updateStep(dto.toStep());
         return StepDto.builder()
                 .id(step.getId())
                 .name(step.getName())
