@@ -19,22 +19,22 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/")
 public class JobAdvertisementController {
-    private final IJobAdvertisement IJobAdvertisement;
+    private final IJobAdvertisement iJobAdvertisement;
 
-    public JobAdvertisementController(IJobAdvertisement IJobAdvertisement) {
-        this.IJobAdvertisement = IJobAdvertisement;
+    public JobAdvertisementController(IJobAdvertisement iJobAdvertisement) {
+        this.iJobAdvertisement = iJobAdvertisement;
 
     }
 
     @PostMapping("jobAdvertisement")
     @ResponseStatus(HttpStatus.CREATED)
     public void createJobAd(@RequestBody JobAdvertisementCreateDto dto) {
-        this.IJobAdvertisement.addJobAds(dto);
+        this.iJobAdvertisement.addJobAds(dto);
     }
 
     @GetMapping("jobAdvertisements")
     public Page<JobAdvertisementDto> listJobAds(Pageable pageable) {
-        return IJobAdvertisement.listJobAds(pageable)
+        return iJobAdvertisement.listJobAds(pageable)
                 .map(jobAdvertisement -> JobAdvertisementDto.builder()
                         .id(jobAdvertisement.getId())
                         .userId(jobAdvertisement.getUserId())
@@ -47,7 +47,7 @@ public class JobAdvertisementController {
 
     @PatchMapping("/updateJobAd/{id}/{userId}")
     public JobAdvertisementDto update(@PathVariable Long id, @PathVariable Long userId, @RequestBody JobAdvertisementUpdateDto dto) {
-        JobAdvertisement jobAdvertisement = IJobAdvertisement.findById(id).orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
+        JobAdvertisement jobAdvertisement = iJobAdvertisement.findById(id).orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
 
         if (dto.toJobAds().getInterviewCount() > 5 || dto.toJobAds().getInterviewCount() == 0)
             throw new NotFountException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
@@ -74,7 +74,7 @@ public class JobAdvertisementController {
             needUpdate = true;
         }
         if (needUpdate)
-            IJobAdvertisement.update(id, userId, jobAdvertisement);
+            iJobAdvertisement.update(id, userId, jobAdvertisement);
 
         return JobAdvertisementDto.builder()
                 .id(id)
@@ -89,6 +89,6 @@ public class JobAdvertisementController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<?> delete(@PathVariable Long id, @RequestParam Long userId) {
-        return ResponseEntity.ok(this.IJobAdvertisement.deleteById(id, userId));
+        return ResponseEntity.ok(this.iJobAdvertisement.deleteById(id, userId));
     }
 }

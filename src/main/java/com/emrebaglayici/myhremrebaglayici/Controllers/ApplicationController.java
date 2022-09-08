@@ -18,21 +18,21 @@ import java.time.LocalDateTime;
 @RestController
 @RequestMapping("/api/v1/")
 public class ApplicationController {
-    private final IApplication IApplication;
+    private final IApplication iApplication;
 
-    public ApplicationController(IApplication IApplication) {
-        this.IApplication = IApplication;
+    public ApplicationController(IApplication iApplication) {
+        this.iApplication = iApplication;
     }
 
     @PostMapping("application")
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@RequestBody ApplicationCreateDto dto) {
-        IApplication.applyJob(dto);
+        iApplication.applyJob(dto);
     }
 
     @GetMapping("applications")
     public Page<ApplicationDto> listApplies(Pageable pageable) {
-        return IApplication.listApply(pageable).map(apply -> ApplicationDto.builder()
+        return iApplication.listApply(pageable).map(apply -> ApplicationDto.builder()
                 .id(apply.getId())
                 .userId(apply.getUserId())
                 .jobId(apply.getJobId())
@@ -43,7 +43,7 @@ public class ApplicationController {
 
     @PatchMapping("updateApplication/{id}/{userId}")
     public ApplicationDto update(@PathVariable Long id, @PathVariable Long userId, @RequestBody ApplicationUpdateDto dto) {
-        Application application = IApplication.getApplicationById(id).orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
+        Application application = iApplication.getApplicationById(id).orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
 
         boolean needUpdate = false;
         if (StringUtils.hasLength(dto.toApply().getPersonalInfo())) {
@@ -56,7 +56,7 @@ public class ApplicationController {
             needUpdate = true;
         }
         if (needUpdate)
-            IApplication.update(id, userId, application);
+            iApplication.update(id, userId, application);
         return ApplicationDto.builder()
                 .id(id)
                 .userId(userId)

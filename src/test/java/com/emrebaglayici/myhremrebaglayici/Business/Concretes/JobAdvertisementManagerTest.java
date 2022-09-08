@@ -40,10 +40,110 @@ class JobAdvertisementManagerTest {
     private JobAdvertisementRepository mockJobRepo;
 
     @Mock
+    private IUserCheck iUserCheck;
+
+    @Mock
     private IUserCheck mockIJob;
 
     @Mock
     private UserRepository mockUserRepo;
+
+    @Test
+    void shouldReturnNotFoundExceptionWhenInvalidUserIdTryingToAddJobAds(){
+        JobAdvertisementCreateDto dto=new JobAdvertisementCreateDto();
+        dto.setUserId(1L);
+        assertThrows(NotFountException.class,()->underTest.addJobAds(dto));
+    }
+
+    @Test
+    void shouldReturnPermissionExceptionWhenCandidateTryingToAddJobAds(){
+        User user=new User(1L,"Emre","Candidate");
+        mockUserRepo.save(user);
+        JobAdvertisementCreateDto dto=new JobAdvertisementCreateDto();
+        dto.setUserId(user.getId());
+        when(iUserCheck.getUserById(user.getId())).thenReturn(Optional.of(user));
+        assertThrows(PermissionException.class,()->underTest.addJobAds(dto));
+    }
+    @Test
+    void shouldNotFoundExceptionWhenInterviewCountInvalidTryingToAddJobAds(){
+        User user=new User(1L,"Emre","Hr");
+        mockUserRepo.save(user);
+        JobAdvertisementCreateDto dto=new JobAdvertisementCreateDto();
+        dto.setUserId(user.getId());
+        dto.setInterviewCount(0);
+        when(iUserCheck.getUserById(user.getId())).thenReturn(Optional.of(user));
+        assertThrows(NotFountException.class,()->underTest.addJobAds(dto));
+    }
+
+    @Test
+    void shouldThrowFillTheBlanksExceptionWhenFieldsAreEmptyTryingToAddJobAds(){
+        User user=new User(1L,"Emre","Hr");
+        mockUserRepo.save(user);
+        JobAdvertisementCreateDto dto=new JobAdvertisementCreateDto();
+        dto.setUserId(user.getId());
+        dto.setType("");
+        dto.setInterviewCount(4);
+        when(iUserCheck.getUserById(user.getId())).thenReturn(Optional.of(user));
+        assertThrows(FillTheBlanksException.class,()->underTest.addJobAds(dto));
+    }
+
+    @Test
+    void shouldReturnNotFountExceptionWhenUserNotValidTryingToUpdateJobAds(){
+        User user=new User(1L,"Emre","Hr");
+        JobAdvertisement jobAdvertisement=new JobAdvertisement(
+            3L, user.getId(), "Full-Time","Back-End Developer",1000,true,5,LocalDateTime.now()
+        );
+        mockJobRepo.save(jobAdvertisement);
+        assertThrows(NotFountException.class,()->underTest.update(jobAdvertisement.getId(), 123L, jobAdvertisement));
+    }
+
+    @Test
+    void shouldReturnPermissionExceptionWhenNotCreatedUserTryingToUpdateJobAds(){
+        User user=new User(1L,"Emre","Hr");
+        mockUserRepo.save(user);
+        JobAdvertisement jobAdvertisement=new JobAdvertisement(
+                3L, 4L, "Full-Time","Back-End Developer",1000,true,5,LocalDateTime.now()
+        );
+        mockJobRepo.save(jobAdvertisement);
+        when(iUserCheck.getUserById(user.getId())).thenReturn(Optional.of(user));
+        assertThrows(PermissionException.class,()->underTest.update(jobAdvertisement.getId(), user.getId(), jobAdvertisement));
+    }
+
+    @Test
+    void shouldReturnNotFoundExceptionWhenJobIdInvalidTryingToDeleteById(){
+        User user=new User(1L,"Emre","Hr");
+        mockUserRepo.save(user);
+        JobAdvertisement jobAdvertisement=new JobAdvertisement(
+                3L, 4L, "Full-Time","Back-End Developer",1000,true,5,LocalDateTime.now()
+        );
+        mockJobRepo.save(jobAdvertisement);
+        assertThrows(NotFountException.class,()->underTest.deleteById(jobAdvertisement.getId(), user.getId()));
+    }
+
+    @Test
+    void shouldReturnNotFoundExceptionWhenUserIdInvalidTryingToUpdateById(){
+        User user=new User(1L,"Emre","Hr");
+        mockUserRepo.save(user);
+        JobAdvertisement jobAdvertisement=new JobAdvertisement(
+                3L, 4L, "Full-Time","Back-End Developer",1000,true,5,LocalDateTime.now()
+        );
+        mockJobRepo.save(jobAdvertisement);
+        when(mockJobRepo.findById(jobAdvertisement.getId())).thenReturn(Optional.of(jobAdvertisement));
+        assertThrows(NotFountException.class,()->underTest.deleteById(jobAdvertisement.getId(), user.getId()));
+    }
+
+    @Test
+    void shouldReturnNotFoundExceptionWhenTheCandidateTryingToDeleteJobAds(){
+        User user=new User(1L,"Emre","Candidate");
+        mockUserRepo.save(user);
+        JobAdvertisement jobAdvertisement=new JobAdvertisement(
+                3L, 4L, "Full-Time","Back-End Developer",1000,true,5,LocalDateTime.now()
+        );
+        mockJobRepo.save(jobAdvertisement);
+        when(mockJobRepo.findById(jobAdvertisement.getId())).thenReturn(Optional.of(jobAdvertisement));
+        when(iUserCheck.getUserById(user.getId())).thenReturn(Optional.of(user));
+        assertThrows(NotFountException.class,()->underTest.deleteById(jobAdvertisement.getId(), user.getId()));
+    }
 
     @Test
     void findByIdTest() {
