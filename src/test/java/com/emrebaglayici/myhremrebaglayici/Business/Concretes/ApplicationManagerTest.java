@@ -5,7 +5,11 @@ import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IUserCheck;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.ApplicationCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Application;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
+import com.emrebaglayici.myhremrebaglayici.Entities.Role;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.AlreadyCreatedException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplicationRepository;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
@@ -25,6 +29,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,6 +47,85 @@ class ApplicationManagerTest {
     private UserRepository mockUserRepo;
     @InjectMocks
     private ApplicationManager underTest;
+
+    @Test
+    void shouldReturnNotFoundExceptionWhenJobIdNotValidTryingToApplyJob(){
+        ApplicationCreateDto dto=new ApplicationCreateDto();
+        dto.setJobId(1L);
+        assertThrows(NotFountException.class,()->underTest.applyJob(dto));
+    }
+
+    @Test
+    void shouldReturnNotFoundExceptionWhenJobNotActiveTryingToApplyJob(){
+        ApplicationCreateDto dto=new ApplicationCreateDto();
+        dto.setJobId(1L);
+        when(iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())).thenReturn(true);
+        assertThrows(NotFountException.class, ()->underTest.applyJob(dto));
+    }
+
+    @Test
+    void shouldReturnPermissionExceptionWhenUserIdNotValidTryingToApplyToJob(){
+        ApplicationCreateDto dto=new ApplicationCreateDto();
+        dto.setJobId(1L);
+        when(iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())).thenReturn(true);
+        when(iJobAdvertisementCheck.isActive(dto.toApply().getJobId())).thenReturn(true);
+        assertThrows(NotFountException.class,()->underTest.applyJob(dto));
+    }
+
+    @Test
+    void shouldReturnPermissionExceptionWhenHrTryToApplyJobAd(){
+        ApplicationCreateDto dto=new ApplicationCreateDto();
+        User user=new User(1L,"Emre","Hr");
+        mockUserRepo.save(user);
+        dto.setJobId(1L);
+        dto.setUserId(user.getId());
+        when(iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())).thenReturn(true);
+        when(iJobAdvertisementCheck.isActive(dto.toApply().getJobId())).thenReturn(true);
+        when(iUserCheck.getUserById(dto.toApply().getUserId())).thenReturn(Optional.of(user));
+        assertThrows(PermissionException.class,()->underTest.applyJob(dto));
+    }
+
+
+    @Test
+    void shouldReturnAlreadyCreatedExceptionWhenUserAlreadyAppliedApplication(){
+        ApplicationCreateDto dto=new ApplicationCreateDto();
+        User user=new User(1L,"Emre", Role.CANDIDATES.getName());
+        mockUserRepo.save(user);
+        dto.setUserId(user.getId());
+        dto.setJobId(3L);
+        dto.setUserId(user.getId());
+        dto.setPersonalInfo("Hi");
+        dto.setExperienceYear(10);
+        Application application=new Application(
+                5L,dto.toApply().getJobId(), user.getId(), 10,"I am very good",LocalDateTime.now()
+        );
+        when(iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())).thenReturn(true);
+        when(iJobAdvertisementCheck.isActive(dto.toApply().getJobId())).thenReturn(true);
+        when(iUserCheck.getUserById(dto.toApply().getUserId())).thenReturn(Optional.of(user));
+        mockAppRepo.save(application);
+        when(mockAppRepo.getUserIdByJobId(application.getJobId())).thenReturn(1L);
+        assertThrows(AlreadyCreatedException.class,()->underTest.applyJob(dto));
+    }
+
+    @Test
+    void shouldReturnNotFoundExceptionWhenUserNotValidTryingToUpdateApplication(){
+        Application application=new Application(
+                5L,2L, 3L, 10,"I am very good",LocalDateTime.now()
+        );
+        mockAppRepo.save(application);
+        assertThrows(NotFountException.class,()->underTest.update(application.getId(),application.getUserId(),application));
+    }
+
+    @Test
+    void shouldThrowPermissionExceptionWhenHrTryToUpdateApplication(){
+        User user=new User(1L,"Emre", Role.HR.getName());
+        Application application=new Application(
+                5L,2L, user.getId(), 10,"I am very good",LocalDateTime.now()
+        );
+        mockAppRepo.save(application);
+        when(iUserCheck.getUserById(application.getUserId())).thenReturn(Optional.of(user));
+        assertThrows(PermissionException.class,()->underTest.update(application.getId(), user.getId(), application));
+    }
 
     @Test
     void applyJob(){
