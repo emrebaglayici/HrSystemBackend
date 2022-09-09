@@ -4,7 +4,7 @@ import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IUser;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.UserDtos.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Role;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
@@ -12,8 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,7 +31,7 @@ public class UserManager implements IUser {
         }
         if (!dto.toUser().getRole().equals(Role.CANDIDATES.getName()) && !dto.toUser().getRole().equals(Role.HR.getName())) {
             log.info("Role not found");
-            throw new NotFountException(Helper.ROLE_NOT_FOUND);
+            throw new NotFoundException(Helper.ROLE_NOT_FOUND);
         }
         log.info("User saved successfully : " + dto.toUser());
         this.userRepository.save(dto.toUser());
@@ -41,7 +39,7 @@ public class UserManager implements IUser {
 
     @Override
     public User deleteById(Long id) {
-        User user=userRepository.findById(id).orElseThrow(()->new NotFountException(Helper.USER_NOT_FOUND));
+        User user=userRepository.findById(id).orElseThrow(()->new NotFoundException(Helper.USER_NOT_FOUND));
         log.info("User deleted successfully : " + user);
         this.userRepository.deleteById(user.getId());
         return user;
@@ -49,7 +47,7 @@ public class UserManager implements IUser {
 
     @Override
     public User updateNameById(Long id, String name) {
-        User user=userRepository.findById(id).orElseThrow(()->new NotFountException(Helper.USER_NOT_FOUND));
+        User user=userRepository.findById(id).orElseThrow(()->new NotFoundException(Helper.USER_NOT_FOUND));
         user.setName(name);
         log.info("User name updated successfully : " + user.getName());
         return this.userRepository.save(user);

@@ -7,7 +7,7 @@ import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Entities.Role;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
@@ -40,7 +40,7 @@ public class JobAdvertisementManager implements IJobAdvertisement {
     @Override
     public void addJobAds(JobAdvertisementCreateDto dto) {
         Optional<User> userOptional = iUserCheck.getUserById(dto.toJobAds().getUserId());
-        userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
+        userOptional.orElseThrow(() -> new NotFoundException(Helper.USER_NOT_FOUND));
 
         if (!userOptional.get().getRole().equals(Role.HR.getName())) {
             log.info("User with id : " + userOptional.get().getId() + " is not Hr.");
@@ -49,7 +49,7 @@ public class JobAdvertisementManager implements IJobAdvertisement {
 
         if (dto.toJobAds().getInterviewCount() > 5 || dto.toJobAds().getInterviewCount() == 0) {
             log.info("Interview count must be 1 to 5 -> current : " + dto.toJobAds().getInterviewCount());
-            throw new NotFountException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
+            throw new NotFoundException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
         }
         if (!dto.toJobAds().getType().equals("") &&
                 dto.toJobAds().getSalary() != 0 && !dto.toJobAds().getDescription().equals("")) {
@@ -67,7 +67,7 @@ public class JobAdvertisementManager implements IJobAdvertisement {
     @Override
     public void update(Long id, Long userId, JobAdvertisement jobAdvertisement) {
         Optional<User> userOptional = iUserCheck.getUserById(userId);
-        userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
+        userOptional.orElseThrow(() -> new NotFoundException(Helper.USER_NOT_FOUND));
         if (!Objects.equals(jobAdvertisement.getUserId(), userId)) {
             log.info("Created user update this advertisement");
             throw new PermissionException("Only person who can update this advertisement is created user");
@@ -79,12 +79,12 @@ public class JobAdvertisementManager implements IJobAdvertisement {
     @Override
     public JobAdvertisement deleteById(Long id, Long userId) {
         Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
-        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
+        JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
         Optional<User> userOptional = this.iUserCheck.getUserById(userId);
-        User user = userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
+        User user = userOptional.orElseThrow(() -> new NotFoundException(Helper.USER_NOT_FOUND));
         if (!userOptional.get().getRole().equals(Role.HR.getName())) {
             log.info("User with id : " + userOptional.get().getId() + " is not Hr.");
-            throw new NotFountException(Helper.USER_MUST_BE_HR);
+            throw new NotFoundException(Helper.USER_MUST_BE_HR);
         }
         log.info("Job advertisement deleted successfully : " + jobAds);
         this.jobAdvertisementRepository.delete(jobAds);

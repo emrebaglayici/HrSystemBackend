@@ -8,7 +8,7 @@ import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Entities.Role;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.AlreadyCreatedException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplicationRepository;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
@@ -52,7 +52,7 @@ class ApplicationManagerTest {
     void shouldReturnNotFoundExceptionWhenJobIdNotValidTryingToApplyJob(){
         ApplicationCreateDto dto=new ApplicationCreateDto();
         dto.setJobId(1L);
-        assertThrows(NotFountException.class,()->underTest.applyJob(dto));
+        assertThrows(NotFoundException.class,()->underTest.applyJob(dto));
     }
 
     @Test
@@ -60,7 +60,7 @@ class ApplicationManagerTest {
         ApplicationCreateDto dto=new ApplicationCreateDto();
         dto.setJobId(1L);
         when(iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())).thenReturn(true);
-        assertThrows(NotFountException.class, ()->underTest.applyJob(dto));
+        assertThrows(NotFoundException.class, ()->underTest.applyJob(dto));
     }
 
     @Test
@@ -69,7 +69,7 @@ class ApplicationManagerTest {
         dto.setJobId(1L);
         when(iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())).thenReturn(true);
         when(iJobAdvertisementCheck.isActive(dto.toApply().getJobId())).thenReturn(true);
-        assertThrows(NotFountException.class,()->underTest.applyJob(dto));
+        assertThrows(NotFoundException.class,()->underTest.applyJob(dto));
     }
 
     @Test
@@ -113,7 +113,7 @@ class ApplicationManagerTest {
                 5L,2L, 3L, 10,"I am very good",LocalDateTime.now()
         );
         mockAppRepo.save(application);
-        assertThrows(NotFountException.class,()->underTest.update(application.getId(),application.getUserId(),application));
+        assertThrows(NotFoundException.class,()->underTest.update(application.getId(),application.getUserId(),application));
     }
 
     @Test
@@ -135,7 +135,6 @@ class ApplicationManagerTest {
                 2L, user.getId(), "Full-Time", "Backend Dev",
                 10000, true, 3, LocalDateTime.now());
         mockJobAdRepo.save(jobAds);
-        System.out.println(jobAds);
         ApplicationCreateDto dto=new ApplicationCreateDto();
         dto.setUserId(user.getId());
         dto.setJobId(jobAds.getId());

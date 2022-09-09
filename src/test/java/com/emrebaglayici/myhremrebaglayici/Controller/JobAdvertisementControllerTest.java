@@ -4,9 +4,8 @@ import com.emrebaglayici.myhremrebaglayici.Business.Abstracts.IJobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvertisementCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvertisementUpdateDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.JobAdvertisementController;
-import com.emrebaglayici.myhremrebaglayici.Entities.Application;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
-import com.emrebaglayici.myhremrebaglayici.Entities.User;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +25,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,6 +37,7 @@ class JobAdvertisementControllerTest {
     private JobAdvertisementRepository mockJobRepo;
     @InjectMocks
     private JobAdvertisementController underTest;
+
 
     @Test
     void createJobAdTest(){
@@ -73,6 +74,31 @@ class JobAdvertisementControllerTest {
         when(iJobAdvertisement.findById(jobAdvertisement.getId())).thenReturn(Optional.of(jobAdvertisement));
         underTest.update(jobAdvertisement.getId(), jobAdvertisement.getUserId(), dto);
         verify(mockJobRepo,times(1)).save(jobAdvertisement);
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenJobAdNotValidTryToUpdate(){
+        JobAdvertisement jobAdvertisement=new JobAdvertisement(
+                1L,2L,"Full","Desc",1000,true,3,LocalDateTime.now()
+        );
+        mockJobRepo.save(jobAdvertisement);
+        JobAdvertisementUpdateDto dto=new JobAdvertisementUpdateDto();
+        dto.setDescription("asd");
+        dto.setInterviewCount(5);
+        assertThrows(NotFoundException.class,()->underTest.update(jobAdvertisement.getId(), jobAdvertisement.getUserId(), dto));
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenInterviewCountNotValidTryToUpdate(){
+        JobAdvertisement jobAdvertisement=new JobAdvertisement(
+                1L,2L,"Full","Desc",1000,true,6,LocalDateTime.now()
+        );
+        mockJobRepo.save(jobAdvertisement);
+        JobAdvertisementUpdateDto dto=new JobAdvertisementUpdateDto();
+        dto.setDescription("asd");
+        dto.setInterviewCount(6);
+        when(iJobAdvertisement.findById(jobAdvertisement.getId())).thenReturn(Optional.of(jobAdvertisement));
+        assertThrows(NotFoundException.class,()->underTest.update(jobAdvertisement.getId(), jobAdvertisement.getUserId(), dto));
     }
 
     @Test

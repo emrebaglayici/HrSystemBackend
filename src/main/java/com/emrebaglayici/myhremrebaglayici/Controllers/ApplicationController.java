@@ -5,7 +5,7 @@ import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.Appl
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.ApplicationDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.ApplicationUpdateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.Application;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +43,7 @@ public class ApplicationController {
 
     @PatchMapping("updateApplication/{id}/{userId}")
     public ApplicationDto update(@PathVariable Long id, @PathVariable Long userId, @RequestBody ApplicationUpdateDto dto) {
-        Application application = iApplication.getApplicationById(id).orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
+        Application application = iApplication.getApplicationById(id).orElseThrow(() -> new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
 
         boolean needUpdate = false;
         if (StringUtils.hasLength(dto.toApply().getPersonalInfo())) {

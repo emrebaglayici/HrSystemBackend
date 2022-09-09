@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({NotFountException.class})
+    @ExceptionHandler({NotFoundException.class})
     public ResponseEntity<CustomError> handleNotFoundException(RuntimeException ex) {
         log.info("NotFountException occurred");
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

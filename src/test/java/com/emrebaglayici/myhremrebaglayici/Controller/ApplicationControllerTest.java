@@ -9,6 +9,7 @@ import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.ApplicationDtos.Appl
 import com.emrebaglayici.myhremrebaglayici.Entities.Application;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplicationRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -69,6 +71,15 @@ class ApplicationControllerTest {
         when(iApplication.getApplicationById(application.getId())).thenReturn(Optional.of(application));
         underTest.update(application.getId(),application.getUserId(),dto);
         verify(mockAppRepo,times(1)).save(application);
+    }
+
+    @Test
+    void shouldThrowNotFoundExceptionWhenJobAdNotValidTryToUpdateApplication(){
+        Application application=new Application(1L,2L,3L,10,"good", LocalDateTime.now());
+        mockAppRepo.save(application);
+        ApplicationUpdateDto dto =new ApplicationUpdateDto();
+        dto.setExperienceYear(25);
+        assertThrows(NotFoundException.class,()->underTest.update(application.getJobId(),application.getUserId(),dto));
     }
 
 }

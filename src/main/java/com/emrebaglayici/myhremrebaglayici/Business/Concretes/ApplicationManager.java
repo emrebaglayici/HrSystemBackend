@@ -8,7 +8,7 @@ import com.emrebaglayici.myhremrebaglayici.Entities.Application;
 import com.emrebaglayici.myhremrebaglayici.Entities.Role;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.AlreadyCreatedException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplicationRepository;
@@ -40,14 +40,14 @@ public class ApplicationManager implements IApplication {
     public void applyJob(ApplicationCreateDto dto) {
         if (!iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())) {
             log.info("Job advertisement with id : " + dto.toApply().getJobId() + " is not found.");
-            throw new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND);
+            throw new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND);
         }
         if (!this.iJobAdvertisementCheck.isActive(dto.toApply().getJobId())) {
             log.info("Job Advertisement with id : " + dto.toApply().getJobId() + " is not active anymore");
-            throw new NotFountException(Helper.JOB_AD_NOT_ACTIVE);
+            throw new NotFoundException(Helper.JOB_AD_NOT_ACTIVE);
         }
         Optional<User> applyUser = iUserCheck.getUserById(dto.toApply().getUserId());
-        User user = applyUser.orElseThrow(() -> new NotFountException("User with id : " + dto.toApply().getUserId() + " is not found"));
+        User user = applyUser.orElseThrow(() -> new NotFoundException("User with id : " + dto.toApply().getUserId() + " is not found"));
         if (!applyUser.get().getRole().equals(Role.CANDIDATES.getName())) {
             log.info("User with id : " + user.getId() + " is not candidates");
             throw new PermissionException(Helper.HR_CANNOT_APPLY_JOB);
@@ -73,14 +73,14 @@ public class ApplicationManager implements IApplication {
     @Override
     public void update(Long id, Long userId, Application application) {
         Optional<User> userOptional = this.iUserCheck.getUserById(userId);
-        User user = userOptional.orElseThrow(() -> new NotFountException(Helper.USER_NOT_FOUND));
+        User user = userOptional.orElseThrow(() -> new NotFoundException(Helper.USER_NOT_FOUND));
         if (!userOptional.get().getRole().equals(Role.CANDIDATES.getName())) {
             log.info("User with id : " + user.getId() + " is not candidates");
             throw new PermissionException(Helper.USER_MUST_BE_CANDIDATES);
         }
         if (!Objects.equals(application.getUserId(), userId)) {
             log.info("Application not found with id : " + application.getUserId());
-            throw new NotFountException(Helper.USER_NOT_FOUND);
+            throw new NotFoundException(Helper.USER_NOT_FOUND);
         }
         log.info("Application updated successfully");
         this.applicationRepository.save(application);

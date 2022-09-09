@@ -9,7 +9,7 @@ import com.emrebaglayici.myhremrebaglayici.Entities.Step;
 import com.emrebaglayici.myhremrebaglayici.Entities.Steps;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.InterviewFailException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import com.emrebaglayici.myhremrebaglayici.Repository.StepRepository;
@@ -37,17 +37,17 @@ public class StepManager implements IStep {
     public void createStep(StepCreateDto step) {
         if (!step.toStep().isResult()){
             log.info("Step must be true at first.");
-            throw new NotFountException(Helper.STEP_MUST_BE_TRUE_AT_FIRST);
+            throw new NotFoundException(Helper.STEP_MUST_BE_TRUE_AT_FIRST);
         }
         if (step.toStep().getNotes().isEmpty() || step.toStep().getName().isEmpty()){
             log.info("Step notes or name empty : "+ step.toStep().getNotes()+" "+step.toStep().getName());
             throw new FillTheBlanksException(Helper.FILL_ALL_BLANKS);
         }
         Optional<Application> applyOptional = this.applicationCheckManager.findById(step.toStep().getApplicationId());
-        Application application = applyOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
+        Application application = applyOptional.orElseThrow(() -> new NotFoundException(Helper.APPLICATION_NOT_FOUND));
         if (!step.toStep().getName().equals(Steps.HR.getName())){
             log.info("First step must be Hr.");
-            throw new NotFountException(Helper.FIRST_STEP_MUST_BE_HR);
+            throw new NotFoundException(Helper.FIRST_STEP_MUST_BE_HR);
         }
         log.info("Step created successfully");
         step.toStep().setOrderCount(1);
@@ -57,13 +57,13 @@ public class StepManager implements IStep {
     @Override
     public Step updateStep(Step step) {
         Optional<Step> stepOptional = this.stepRepository.findById(step.getId());
-        Step steps = stepOptional.orElseThrow(() -> new NotFountException(Helper.STEP_NOT_FOUND));
+        Step steps = stepOptional.orElseThrow(() -> new NotFoundException(Helper.STEP_NOT_FOUND));
 
         Optional<Application> applicationOptional = this.applicationCheckManager.findById(step.getApplicationId());
-        Application application = applicationOptional.orElseThrow(() -> new NotFountException(Helper.APPLICATION_NOT_FOUND));
+        Application application = applicationOptional.orElseThrow(() -> new NotFoundException(Helper.APPLICATION_NOT_FOUND));
 
         Optional<JobAdvertisement> jobAdvertisementOptional = this.iJobAdvertisementCheck.getJobById(application.getJobId());
-        JobAdvertisement jobAdvertisement = jobAdvertisementOptional.orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
+        JobAdvertisement jobAdvertisement = jobAdvertisementOptional.orElseThrow(() -> new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
         boolean isNameOffer = step.getName().equals(Steps.OFFER.getName());
         if (step.getName().equals(Steps.HR.getName())){
             log.info("Hr must be only first step");

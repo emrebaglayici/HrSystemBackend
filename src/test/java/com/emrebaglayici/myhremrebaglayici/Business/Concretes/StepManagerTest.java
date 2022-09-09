@@ -5,7 +5,7 @@ import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.StepDtos.StepCreateD
 import com.emrebaglayici.myhremrebaglayici.Entities.*;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.InterviewFailException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.PermissionException;
 import com.emrebaglayici.myhremrebaglayici.Repository.ApplicationRepository;
 import com.emrebaglayici.myhremrebaglayici.Repository.JobAdvertisementRepository;
@@ -61,7 +61,7 @@ class StepManagerTest {
         dto.setResult(false);
         dto.setNotes("Hr Interview");
         dto.setApplicationId(2L);
-        assertThrows(NotFountException.class, () -> underTest.createStep(dto));
+        assertThrows(NotFoundException.class, () -> underTest.createStep(dto));
     }
 
     @Test
@@ -81,7 +81,7 @@ class StepManagerTest {
         dto.setResult(true);
         dto.setNotes("Hr Interview");
         dto.setApplicationId(2L);
-        assertThrows(NotFountException.class, () -> underTest.createStep(dto));
+        assertThrows(NotFoundException.class, () -> underTest.createStep(dto));
 
     }
 
@@ -97,19 +97,19 @@ class StepManagerTest {
         dto.setNotes("Hr Interview");
         dto.setApplicationId(2L);
         when(applicationCheckManager.findById(dto.toStep().getApplicationId())).thenReturn(Optional.of(application));
-        assertThrows(NotFountException.class,()->underTest.createStep(dto));
+        assertThrows(NotFoundException.class,()->underTest.createStep(dto));
     }
 
     @Test
     void shouldThrowNotFoundExceptionWhenStepNotValidTryToUpdateStep(){
         Step step=new Step(1,"CODETASK",2,2L,true,"Passed");
-        assertThrows(NotFountException.class,()->underTest.updateStep(step));
+        assertThrows(NotFoundException.class,()->underTest.updateStep(step));
     }
     @Test
     void shouldNotFoundExceptionWhenApplicationNotValidTryToUpdateStep(){
         Step step=new Step(1,"CODETASK",2,2L,true,"Passed");
         when(mockStepRepo.findById(step.getId())).thenReturn(Optional.of(step));
-        assertThrows(NotFountException.class,()->underTest.updateStep(step));
+        assertThrows(NotFoundException.class,()->underTest.updateStep(step));
     }
 
     @Test
@@ -118,7 +118,7 @@ class StepManagerTest {
         Application application=new Application();
         when(mockStepRepo.findById(step.getId())).thenReturn(Optional.of(step));
         when(applicationCheckManager.findById(step.getApplicationId())).thenReturn(Optional.of(application));
-        assertThrows(NotFountException.class,()->underTest.updateStep(step));
+        assertThrows(NotFoundException.class,()->underTest.updateStep(step));
     }
 
     @Test

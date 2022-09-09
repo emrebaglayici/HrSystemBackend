@@ -5,7 +5,7 @@ import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvert
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvertisementDto;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.JobAdsDtos.JobAdvertisementUpdateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.JobAdvertisement;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Helper.Helper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -47,10 +47,10 @@ public class JobAdvertisementController {
 
     @PatchMapping("/updateJobAd/{id}/{userId}")
     public JobAdvertisementDto update(@PathVariable Long id, @PathVariable Long userId, @RequestBody JobAdvertisementUpdateDto dto) {
-        JobAdvertisement jobAdvertisement = iJobAdvertisement.findById(id).orElseThrow(() -> new NotFountException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
+        JobAdvertisement jobAdvertisement = iJobAdvertisement.findById(id).orElseThrow(() -> new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
 
         if (dto.toJobAds().getInterviewCount() > 5 || dto.toJobAds().getInterviewCount() == 0)
-            throw new NotFountException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
+            throw new NotFoundException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
 
         boolean needUpdate = false;
         if (StringUtils.hasLength(dto.toJobAds().getType())) {

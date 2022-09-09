@@ -3,7 +3,7 @@ package com.emrebaglayici.myhremrebaglayici.Business.Concretes;
 import com.emrebaglayici.myhremrebaglayici.Controllers.Dtos.UserDtos.UserCreateDto;
 import com.emrebaglayici.myhremrebaglayici.Entities.User;
 import com.emrebaglayici.myhremrebaglayici.Exceptions.FillTheBlanksException;
-import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFountException;
+import com.emrebaglayici.myhremrebaglayici.Exceptions.NotFoundException;
 import com.emrebaglayici.myhremrebaglayici.Repository.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,12 +39,12 @@ class UserManagerTest {
         UserCreateDto dto=new UserCreateDto();
         dto.setName("emre");
         dto.setRole("DIFFERENT");
-        assertThrows(NotFountException.class,()->underTest.saveUser(dto));
+        assertThrows(NotFoundException.class,()->underTest.saveUser(dto));
     }
 
     @Test
     void shouldReturnNotFoundExceptionWhenUserIdInvalidTryingToUpdateNameById(){
-        assertThrows(NotFountException.class,()->underTest.deleteById(2L));
+        assertThrows(NotFoundException.class,()->underTest.deleteById(2L));
     }
 
     @Test
