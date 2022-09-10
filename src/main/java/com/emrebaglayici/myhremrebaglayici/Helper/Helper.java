@@ -1,6 +1,7 @@
 package com.emrebaglayici.myhremrebaglayici.Helper;
 
 public class Helper {
+    //Constant messages.
     public static final String USER_MUST_BE_CANDIDATES="USER MUST BE CANDIDATES";
     public static final String USER_MUST_BE_HR="USER MUST BE HR";
     public static final String USER_NOT_FOUND="USER NOT FOUND";

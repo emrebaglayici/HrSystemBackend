@@ -35,6 +35,8 @@ public class StepManager implements IStep {
 
     @Override
     public void createStep(StepCreateDto step) {
+        //Creating interview step.
+        //Rules-> Step result must be true at first and first step must be Hr.
         if (!step.toStep().isResult()){
             log.info("Step must be true at first.");
             throw new NotFoundException(Helper.STEP_MUST_BE_TRUE_AT_FIRST);
@@ -56,6 +58,10 @@ public class StepManager implements IStep {
 
     @Override
     public Step updateStep(Step step) {
+        //Step updating algorithm
+        // Rules -> Hr can be only first step , if step count reached then step is over
+        // if step result is before step count reached false then interview fails , if step count reached then steps are over,
+        // Offer can be given any step.
         Optional<Step> stepOptional = this.stepRepository.findById(step.getId());
         Step steps = stepOptional.orElseThrow(() -> new NotFoundException(Helper.STEP_NOT_FOUND));
 
@@ -111,6 +117,7 @@ public class StepManager implements IStep {
 
     @Override
     public Page<Step> listStep(Pageable pageable) {
+        //Lists all steps
         return this.stepRepository.findAll(pageable);
     }
 }

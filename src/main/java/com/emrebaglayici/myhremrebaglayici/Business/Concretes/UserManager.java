@@ -25,6 +25,8 @@ public class UserManager implements IUser {
 
     @Override
     public void saveUser(UserCreateDto dto) {
+        //Register new user.
+        //Rule -> Role must be chosen from Role enum.
         if (dto.toUser().getName().isEmpty() || dto.toUser().getRole().isEmpty()) {
             log.info("User name or role empty");
             throw new FillTheBlanksException(Helper.FILL_ALL_BLANKS);
@@ -39,6 +41,7 @@ public class UserManager implements IUser {
 
     @Override
     public User deleteById(Long id) {
+        //Deletes user by id.
         User user=userRepository.findById(id).orElseThrow(()->new NotFoundException(Helper.USER_NOT_FOUND));
         log.info("User deleted successfully : " + user);
         this.userRepository.deleteById(user.getId());
@@ -47,6 +50,7 @@ public class UserManager implements IUser {
 
     @Override
     public User updateNameById(Long id, String name) {
+        //Updates username by id
         User user=userRepository.findById(id).orElseThrow(()->new NotFoundException(Helper.USER_NOT_FOUND));
         user.setName(name);
         log.info("User name updated successfully : " + user.getName());
@@ -54,6 +58,7 @@ public class UserManager implements IUser {
     }
 
     public Page<User> listUsers(Pageable page) {
+        //Lists all users.
         return userRepository.findAll(page);
     }
 }

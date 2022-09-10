@@ -48,7 +48,8 @@ public class JobAdvertisementController {
     @PatchMapping("/updateJobAd/{id}/{userId}")
     public JobAdvertisementDto update(@PathVariable Long id, @PathVariable Long userId, @RequestBody JobAdvertisementUpdateDto dto) {
         JobAdvertisement jobAdvertisement = iJobAdvertisement.findById(id).orElseThrow(() -> new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-
+        //Updates job advertisement only changed fields.
+        //Rule interview count range 1 to 5.
         if (dto.toJobAds().getInterviewCount() > 5 || dto.toJobAds().getInterviewCount() == 0)
             throw new NotFoundException(Helper.INTERVIEW_COUNT_MUST_BE_1TO5);
 

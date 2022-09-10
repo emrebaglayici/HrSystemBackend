@@ -14,6 +14,7 @@ public class UserCheckManager implements IUserCheck {
     }
     @Override
     public Optional<User> getUserById(Long userId) {
+        // Find user with id
         return userRepository.findById(userId);
     }
 }

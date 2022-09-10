@@ -17,6 +17,7 @@ public class ApplicationCheckManager implements IApplicationCheck {
 
     @Override
     public Optional<Application> findById(Long id) {
+        //Find user by id.
         return applicationRepository.findById(id);
     }
 

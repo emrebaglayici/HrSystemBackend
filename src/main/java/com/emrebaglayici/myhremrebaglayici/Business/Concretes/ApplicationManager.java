@@ -38,6 +38,9 @@ public class ApplicationManager implements IApplication {
 
     @Override
     public void applyJob(ApplicationCreateDto dto) {
+        //Job Application method with checks.
+        //Rules -> if job is not active then cannot apply, HR cannot apply job ads and
+        // Candidate cannot apply second time.
         if (!iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())) {
             log.info("Job advertisement with id : " + dto.toApply().getJobId() + " is not found.");
             throw new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND);
@@ -62,16 +65,20 @@ public class ApplicationManager implements IApplication {
 
     @Override
     public Page<Application> listApply(Pageable pageable) {
+        //Lists all applications
         return this.applicationRepository.findAll(pageable);
     }
 
     @Override
     public Optional<Application> getApplicationById(Long id) {
+        //Find application by Id
         return applicationRepository.findById(id);
     }
 
     @Override
     public void update(Long id, Long userId, Application application) {
+        //Updates the application
+        //Rule -> User must be candidate.
         Optional<User> userOptional = this.iUserCheck.getUserById(userId);
         User user = userOptional.orElseThrow(() -> new NotFoundException(Helper.USER_NOT_FOUND));
         if (!userOptional.get().getRole().equals(Role.CANDIDATES.getName())) {

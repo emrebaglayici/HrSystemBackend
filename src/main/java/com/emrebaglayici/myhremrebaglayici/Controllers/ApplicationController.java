@@ -44,7 +44,7 @@ public class ApplicationController {
     @PatchMapping("updateApplication/{id}/{userId}")
     public ApplicationDto update(@PathVariable Long id, @PathVariable Long userId, @RequestBody ApplicationUpdateDto dto) {
         Application application = iApplication.getApplicationById(id).orElseThrow(() -> new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
-
+        //Updates only changed fields.
         boolean needUpdate = false;
         if (StringUtils.hasLength(dto.toApply().getPersonalInfo())) {
             application.setPersonalInfo(dto.toApply().getPersonalInfo());

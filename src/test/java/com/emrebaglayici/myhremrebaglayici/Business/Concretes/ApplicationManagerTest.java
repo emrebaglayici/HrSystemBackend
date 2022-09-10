@@ -138,7 +138,7 @@ class ApplicationManagerTest {
         ApplicationCreateDto dto=new ApplicationCreateDto();
         dto.setUserId(user.getId());
         dto.setJobId(jobAds.getId());
-        dto.setPersonalInfo("selam ben emre");
+        dto.setPersonalInfo("Hi emre");
         dto.setExperienceYear(20);
         when(iUserCheck.getUserById(user.getId())).thenReturn(Optional.of(user));
         when(iJobAdvertisementCheck.existsJob(dto.toApply().getJobId())).thenReturn(true);

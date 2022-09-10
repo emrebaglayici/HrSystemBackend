@@ -34,11 +34,14 @@ public class JobAdvertisementManager implements IJobAdvertisement {
 
     @Override
     public Optional<JobAdvertisement> findById(Long id) {
+        //Finds job advertisement by id.
         return this.jobAdvertisementRepository.findById(id);
     }
 
     @Override
     public void addJobAds(JobAdvertisementCreateDto dto) {
+        //Create job advertisement
+        //Rules -> User must be HR , inteview count must 1 to 5
         Optional<User> userOptional = iUserCheck.getUserById(dto.toJobAds().getUserId());
         userOptional.orElseThrow(() -> new NotFoundException(Helper.USER_NOT_FOUND));
 
@@ -61,11 +64,14 @@ public class JobAdvertisementManager implements IJobAdvertisement {
 
     @Override
     public Page<JobAdvertisement> listJobAds(Pageable pageable) {
+        //List all job advertisements.
         return this.jobAdvertisementRepository.findAll(pageable);
     }
 
     @Override
     public void update(Long id, Long userId, JobAdvertisement jobAdvertisement) {
+        //Updates the job advertisement
+        // Rule -> only person who can update this advertisement is created user.
         Optional<User> userOptional = iUserCheck.getUserById(userId);
         userOptional.orElseThrow(() -> new NotFoundException(Helper.USER_NOT_FOUND));
         if (!Objects.equals(jobAdvertisement.getUserId(), userId)) {
@@ -78,6 +84,8 @@ public class JobAdvertisementManager implements IJobAdvertisement {
 
     @Override
     public JobAdvertisement deleteById(Long id, Long userId) {
+        //Delete job advertisement by id.
+        //Rule -> Only Hr delete.
         Optional<JobAdvertisement> jobAdsOptional = this.jobAdvertisementRepository.findById(id);
         JobAdvertisement jobAds = jobAdsOptional.orElseThrow(() -> new NotFoundException(Helper.JOB_ADVERTISEMENT_NOT_FOUND));
         Optional<User> userOptional = this.iUserCheck.getUserById(userId);
